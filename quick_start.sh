@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# AutoClip 快速启动脚本
-# 版本: 2.0
-# 功能: 快速启动开发环境，跳过详细检查
+# Script khởi động nhanh AutoClip
+# Phiên bản: 2.0
+# Chức năng: Khởi động môi trường phát triển nhanh, bỏ qua kiểm tra chi tiết
 
 set -euo pipefail
 
 # =============================================================================
-# 配置区域
+# Vùng cấu hình
 # =============================================================================
 
 BACKEND_PORT=8000
 FRONTEND_PORT=3000
 
 # =============================================================================
-# 颜色定义
+# Định nghĩa màu sắc
 # =============================================================================
 
 GREEN='\033[0;32m'
@@ -23,7 +23,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 # =============================================================================
-# 工具函数
+# Hàm tiện ích
 # =============================================================================
 
 log_info() {
@@ -39,95 +39,95 @@ log_warning() {
 }
 
 # =============================================================================
-# 主函数
+# Hàm chính
 # =============================================================================
 
 main() {
-    echo -e "${GREEN}🚀 AutoClip 快速启动${NC}"
+    echo -e "${GREEN}🚀 AutoClip Khởi động nhanh${NC}"
     echo ""
     
-    # 检查虚拟环境
+    # Kiểm tra môi trường ảo
     if [[ ! -d "venv" ]]; then
-        log_warning "虚拟环境不存在，请先运行: python3 -m venv venv"
+        log_warning "Môi trường ảo không tồn tại, vui lòng chạy: python3 -m venv venv"
         exit 1
     fi
     
-    # 激活虚拟环境
-    log_info "激活虚拟环境..."
+    # Kích hoạt môi trường ảo
+    log_info "Đang kích hoạt môi trường ảo..."
     source venv/bin/activate
     
-    # 设置Python路径
+    # Thiết lập đường dẫn Python
     : "${PYTHONPATH:=}"
     export PYTHONPATH="${PWD}:${PYTHONPATH}"
     
-    # 加载环境变量
+    # Tải biến môi trường
     if [[ -f ".env" ]]; then
         set -a
         source .env
         set +a
     fi
     
-    # 启动Redis（如果需要）
+    # Khởi động Redis (nếu cần)
     if ! redis-cli ping >/dev/null 2>&1; then
-        log_info "启动Redis..."
+        log_info "Đang khởi động Redis..."
         if command -v brew >/dev/null; then
             brew services start redis
             sleep 2
         fi
     fi
     
-    # 创建日志目录
+    # Tạo thư mục nhật ký
     mkdir -p logs
     
-    # 启动后端
-    log_info "启动后端服务..."
+    # Khởi động backend
+    log_info "Đang khởi động dịch vụ backend..."
     nohup python -m uvicorn backend.main:app --host 0.0.0.0 --port "$BACKEND_PORT" --reload > logs/backend.log 2>&1 &
     echo $! > backend.pid
     
-    # 启动Celery Worker
-    log_info "启动Celery Worker..."
+    # Khởi động Celery Worker
+    log_info "Đang khởi động Celery Worker..."
     nohup celery -A backend.core.celery_app worker --loglevel=info --concurrency=2 -Q processing,upload,notification,maintenance > logs/celery.log 2>&1 &
     echo $! > celery.pid
     
-    # 启动前端
-    log_info "启动前端服务..."
+    # Khởi động frontend
+    log_info "Đang khởi động dịch vụ frontend..."
     cd frontend
     nohup npm run dev -- --host 0.0.0.0 --port "$FRONTEND_PORT" > ../logs/frontend.log 2>&1 &
     echo $! > ../frontend.pid
     cd ..
     
-    # 等待服务启动
-    log_info "等待服务启动..."
+    # Chờ dịch vụ khởi động
+    log_info "Đang chờ dịch vụ khởi động..."
     sleep 5
     
-    # 检查服务状态
+    # Kiểm tra trạng thái dịch vụ
     if curl -fsS "http://localhost:$BACKEND_PORT/api/v1/health/" >/dev/null 2>&1; then
-        log_success "后端服务已启动"
+        log_success "Dịch vụ backend đã khởi động"
     else
-        log_warning "后端服务启动可能有问题"
+        log_warning "Dịch vụ backend có thể gặp sự cố khi khởi động"
     fi
     
     if curl -fsS "http://localhost:$FRONTEND_PORT/" >/dev/null 2>&1; then
-        log_success "前端服务已启动"
+        log_success "Dịch vụ frontend đã khởi động"
     else
-        log_warning "前端服务启动可能有问题"
+        log_warning "Dịch vụ frontend có thể gặp sự cố khi khởi động"
     fi
     
     echo ""
-    log_success "快速启动完成！"
+    log_success "Khởi động nhanh hoàn tất!"
     echo ""
-    echo "🌐 访问地址:"
-    echo "  前端: http://localhost:$FRONTEND_PORT"
-    echo "  后端: http://localhost:$BACKEND_PORT"
-    echo "  API文档: http://localhost:$BACKEND_PORT/docs"
+    echo "🌐 Địa chỉ truy cập:"
+    echo "  Frontend: http://localhost:$FRONTEND_PORT"
+    echo "  Backend:  http://localhost:$BACKEND_PORT"
+    echo "  Tài liệu API: http://localhost:$BACKEND_PORT/docs"
     echo ""
-    echo "📝 查看日志:"
+    echo "📝 Xem nhật ký:"
     echo "  tail -f logs/backend.log"
     echo "  tail -f logs/frontend.log"
     echo "  tail -f logs/celery.log"
     echo ""
-    echo "🛑 停止服务: ./stop_autoclip.sh"
+    echo "🛑 Dừng dịch vụ: ./stop_autoclip.sh"
 }
 
-# 运行主函数
+# Chạy hàm chính
 main "$@"

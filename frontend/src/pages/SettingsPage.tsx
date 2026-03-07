@@ -20,36 +20,36 @@ const SettingsPage: React.FC = () => {
   // 提供商配置
   const providerConfig = {
     dashscope: {
-      name: '阿里通义千问',
+      name: 'Alibaba Thông Nghìn Vấn',
       icon: <RobotOutlined />,
       color: '#1890ff',
-      description: '阿里云通义千问大模型服务',
+      description: 'Dịch vụ mô hình lớn Alibaba Thông Nghìn Vấn',
       apiKeyField: 'dashscope_api_key',
-      placeholder: '请输入通义千问API密钥'
+      placeholder: 'Nhập API key Thông Nghìn Vấn'
     },
     openai: {
       name: 'OpenAI',
       icon: <RobotOutlined />,
       color: '#52c41a',
-      description: 'OpenAI GPT系列模型',
+      description: 'Mô hình GPT của OpenAI',
       apiKeyField: 'openai_api_key',
-      placeholder: '请输入OpenAI API密钥'
+      placeholder: 'Nhập API key OpenAI'
     },
     gemini: {
       name: 'Google Gemini',
       icon: <RobotOutlined />,
       color: '#faad14',
-      description: 'Google Gemini大模型',
+      description: 'Mô hình lớn Google Gemini',
       apiKeyField: 'gemini_api_key',
-      placeholder: '请输入Gemini API密钥'
+      placeholder: 'Nhập API key Gemini'
     },
     siliconflow: {
-      name: '硅基流动',
+      name: 'SiliconFlow',
       icon: <RobotOutlined />,
       color: '#722ed1',
-      description: '硅基流动模型服务',
+      description: 'Dịch vụ mô hình SiliconFlow',
       apiKeyField: 'siliconflow_api_key',
-      placeholder: '请输入硅基流动API密钥'
+      placeholder: 'Nhập API key SiliconFlow'
     }
   }
 
@@ -82,10 +82,10 @@ const SettingsPage: React.FC = () => {
     try {
       setLoading(true)
       await settingsApi.updateSettings(values)
-      message.success('配置保存成功！')
+      message.success('Lưu cấu hình thành công!')
       await loadData() // 重新加载数据
     } catch (error: any) {
-      message.error('保存失败: ' + (error.message || '未知错误'))
+      message.error('Lưu thất bại: ' + (error.message || 'Lỗi không xác định'))
     } finally {
       setLoading(false)
     }
@@ -97,12 +97,12 @@ const SettingsPage: React.FC = () => {
     const modelName = form.getFieldValue('model_name')
     
     if (!apiKey) {
-      message.error('请先输入API密钥')
+      message.error('Vui lòng nhập API key trước')
       return
     }
 
     if (!modelName) {
-      message.error('请先选择模型')
+      message.error('Vui lòng chọn mô hình trước')
       return
     }
 
@@ -110,12 +110,12 @@ const SettingsPage: React.FC = () => {
       setLoading(true)
       const result = await settingsApi.testApiKey(selectedProvider, apiKey, modelName)
       if (result.success) {
-        message.success('API密钥测试成功！')
+        message.success('Kiểm tra API key thành công!')
       } else {
-        message.error('API密钥测试失败: ' + (result.error || '未知错误'))
+        message.error('Kiểm tra API key thất bại: ' + (result.error || 'Lỗi không xác định'))
       }
     } catch (error: any) {
-      message.error('测试失败: ' + (error.message || '未知错误'))
+      message.error('Kiểm tra thất bại: ' + (error.message || 'Lỗi không xác định'))
     } finally {
       setLoading(false)
     }
@@ -131,15 +131,15 @@ const SettingsPage: React.FC = () => {
     <Content className="settings-page">
       <div className="settings-container">
         <Title level={2} className="settings-title">
-          <SettingOutlined /> 系统设置
+          <SettingOutlined /> Cài đặt hệ thống
         </Title>
         
         <Tabs defaultActiveKey="api" className="settings-tabs">
-          <TabPane tab="AI 模型配置" key="api">
-            <Card title="AI 模型配置" className="settings-card">
+          <TabPane tab="Cấu hình mô hình AI" key="api">
+            <Card title="Cấu hình mô hình AI" className="settings-card">
               <Alert
-                message="多模型提供商支持"
-                description="系统现在支持多个AI模型提供商，您可以根据需要选择不同的服务商和模型。"
+                message="Hỗ trợ nhiều nhà cung cấp mô hình"
+                description="Hệ thống hỗ trợ nhiều nhà cung cấp mô hình AI, bạn có thể chọn dịch vụ và mô hình phù hợp với nhu cầu."
                 type="info"
                 showIcon
                 className="settings-alert"
@@ -161,7 +161,7 @@ const SettingsPage: React.FC = () => {
                 {/* 当前提供商状态 */}
                 {currentProvider.available && (
                   <Alert
-                    message={`当前使用: ${currentProvider.display_name} - ${currentProvider.model}`}
+                    message={`Đang sử dụng: ${currentProvider.display_name} - ${currentProvider.model}`}
                     type="success"
                     showIcon
                     style={{ marginBottom: 24 }}
@@ -170,23 +170,23 @@ const SettingsPage: React.FC = () => {
 
                 {/* 提供商选择 */}
                 <Form.Item
-                  label="选择AI模型提供商"
+                  label="Chọn nhà cung cấp mô hình AI"
                   name="llm_provider"
                   className="form-item"
-                  rules={[{ required: true, message: '请选择AI模型提供商' }]}
+                  rules={[{ required: true, message: 'Vui lòng chọn nhà cung cấp mô hình AI' }]}
                 >
                   <Select
                     value={selectedProvider}
                     onChange={handleProviderChange}
                     className="settings-input"
-                    placeholder="请选择AI模型提供商"
+                    placeholder="Chọn nhà cung cấp mô hình AI"
                   >
                     {Object.entries(providerConfig).map(([key, config]) => (
                       <Select.Option key={key} value={key}>
                         <Space>
                           <span style={{ color: config.color }}>{config.icon}</span>
                           <span>{config.name}</span>
-                          <Tag color={config.color} size="small">{config.description}</Tag>
+                          <Tag color={config.color}>{config.description}</Tag>
                         </Space>
                       </Select.Option>
                     ))}
@@ -199,8 +199,8 @@ const SettingsPage: React.FC = () => {
                   name={providerConfig[selectedProvider as keyof typeof providerConfig].apiKeyField}
                   className="form-item"
                   rules={[
-                    { required: true, message: '请输入API密钥' },
-                    { min: 10, message: 'API密钥长度不能少于10位' }
+                    { required: true, message: 'Vui lòng nhập API key' },
+                    { min: 10, message: 'API key phải có ít nhất 10 ký tự' }
                   ]}
                 >
                   <Input.Password
@@ -212,24 +212,22 @@ const SettingsPage: React.FC = () => {
 
                 {/* 模型选择 */}
                 <Form.Item
-                  label="选择模型"
+                  label="Chọn mô hình"
                   name="model_name"
                   className="form-item"
-                  rules={[{ required: true, message: '请选择模型' }]}
+                  rules={[{ required: true, message: 'Vui lòng chọn mô hình' }]}
                 >
                   <Select
                     className="settings-input"
-                    placeholder="请选择模型"
+                    placeholder="Chọn mô hình"
                     showSearch
-                    filterOption={(input, option) =>
-                      (option?.children as string)?.toLowerCase().includes(input.toLowerCase())
-                    }
+                    optionFilterProp="label"
                   >
                     {availableModels[selectedProvider]?.map((model: any) => (
-                      <Select.Option key={model.name} value={model.name}>
+                      <Select.Option key={model.name} value={model.name} label={model.display_name}>
                         <Space>
                           <span>{model.display_name}</span>
-                          <Tag size="small">最大{model.max_tokens} tokens</Tag>
+                          <Tag>Tối đa {model.max_tokens} tokens</Tag>
                         </Space>
                       </Select.Option>
                     ))}
@@ -245,19 +243,19 @@ const SettingsPage: React.FC = () => {
                       onClick={handleTestApiKey}
                       loading={loading}
                     >
-                      测试连接
+                      Kiểm tra kết nối
                     </Button>
                   </Space>
                 </Form.Item>
 
                 <Divider className="settings-divider" />
 
-                <Title level={4} className="section-title">模型配置</Title>
+                <Title level={4} className="section-title">Cấu hình mô hình</Title>
                 
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item
-                      label="模型名称"
+                      label="Tên mô hình"
                       name="model_name"
                       className="form-item"
                     >
@@ -266,14 +264,14 @@ const SettingsPage: React.FC = () => {
                   </Col>
                   <Col span={12}>
                     <Form.Item
-                      label="文本分块大小"
+                      label="Kích thước phân đoạn văn bản"
                       name="chunk_size"
                       className="form-item"
                     >
                       <Input 
                         type="number" 
                         placeholder="5000" 
-                        addonAfter="字符" 
+                        addonAfter="ký tự" 
                         className="settings-input"
                       />
                     </Form.Item>
@@ -283,7 +281,7 @@ const SettingsPage: React.FC = () => {
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item
-                      label="最低评分阈值"
+                      label="Ngưỡng điểm tối thiểu"
                       name="min_score_threshold"
                       className="form-item"
                     >
@@ -299,14 +297,14 @@ const SettingsPage: React.FC = () => {
                   </Col>
                   <Col span={12}>
                     <Form.Item
-                      label="每个合集最大切片数"
+                      label="Số đoạn tối đa mỗi bộ sưu tập"
                       name="max_clips_per_collection"
                       className="form-item"
                     >
                       <Input 
                         type="number" 
                         placeholder="5" 
-                        addonAfter="个" 
+                        addonAfter="đoạn" 
                         className="settings-input"
                       />
                     </Form.Item>
@@ -322,35 +320,35 @@ const SettingsPage: React.FC = () => {
                     className="save-button"
                     loading={loading}
                   >
-                    保存配置
+                    Lưu cấu hình
                   </Button>
                 </Form.Item>
               </Form>
             </Card>
 
-            <Card title="使用说明" className="settings-card">
+            <Card title="Hướng dẫn sử dụng" className="settings-card">
               <Space direction="vertical" size="large" className="instructions-space">
                 <div className="instruction-item">
                   <Title level={5} className="instruction-title">
-                    <InfoCircleOutlined /> 1. 选择AI模型提供商
+                    <InfoCircleOutlined /> 1. Chọn nhà cung cấp mô hình AI
                   </Title>
                   <Paragraph className="instruction-text">
-                    系统支持多个AI模型提供商：
-                    <br />• <Text strong>阿里通义千问</Text>：访问阿里云控制台获取API密钥
-                    <br />• <Text strong>OpenAI</Text>：访问 platform.openai.com 获取API密钥
-                    <br />• <Text strong>Google Gemini</Text>：访问 ai.google.dev 获取API密钥
-                    <br />• <Text strong>硅基流动</Text>：访问 docs.siliconflow.cn 获取API密钥
+                    Hệ thống hỗ trợ nhiều nhà cung cấp mô hình AI:
+                    <br />• <Text strong>Alibaba Thông Nghìn Vấn</Text>：Truy cập bảng điều khiển Alibaba Cloud để lấy API key
+                    <br />• <Text strong>OpenAI</Text>: Truy cập platform.openai.com để lấy API key
+                    <br />• <Text strong>Google Gemini</Text>: Truy cập ai.google.dev để lấy API key
+                    <br />• <Text strong>SiliconFlow</Text>: Truy cập docs.siliconflow.cn để lấy API key
                   </Paragraph>
                 </div>
                 
                 <div className="instruction-item">
                   <Title level={5} className="instruction-title">
-                    <InfoCircleOutlined /> 2. 配置参数说明
+                    <InfoCircleOutlined /> 2. Giải thích tham số cấu hình
                   </Title>
                   <Paragraph className="instruction-text">
-                    • <Text strong>文本分块大小</Text>：影响处理速度和精度，建议5000字符<br />
-                    • <Text strong>评分阈值</Text>：只有高于此分数的片段才会被保留<br />
-                    • <Text strong>合集切片数</Text>：控制每个主题合集包含的片段数量
+                    • <Text strong>Kích thước phân đoạn</Text>:Ảnh hưởng tốc độ và độ chính xác, khuyến nghị 5000 ký tự<br />
+                    • <Text strong>Ngưỡng điểm</Text>:Chỉ giữ các đoạn có điểm cao hơn ngưỡng này<br />
+                    • <Text strong>Số đoạn mỗi bộ sưu tập</Text>:Kiểm soát số lượng đoạn trong mỗi bộ sưu tập chủ đề
                   </Paragraph>
                 </div>
                 
@@ -359,23 +357,23 @@ const SettingsPage: React.FC = () => {
                     <InfoCircleOutlined /> 3. 测试连接
                   </Title>
                   <Paragraph className="instruction-text">
-                    保存前建议先测试API密钥是否有效，确保服务正常运行
+                    Nên kiểm tra API key trước khi lưu để đảm bảo dịch vụ hoạt động bình thường
                   </Paragraph>
                 </div>
               </Space>
             </Card>
           </TabPane>
 
-          <TabPane tab="B站管理" key="bilibili">
-            <Card title="B站账号管理" className="settings-card">
+          <TabPane tab="Quản lý B站" key="bilibili">
+            <Card title="Quản lý tài khoản B站" className="settings-card">
               <div style={{ textAlign: 'center', padding: '40px 20px' }}>
                 <div style={{ marginBottom: '24px' }}>
                   <UserOutlined style={{ fontSize: '48px', color: '#1890ff', marginBottom: '16px' }} />
                   <Title level={3} style={{ color: '#ffffff', margin: '0 0 8px 0' }}>
-                    B站账号管理
+                    Quản lý tài khoản B站
                   </Title>
                   <Text type="secondary" style={{ color: '#b0b0b0', fontSize: '16px' }}>
-                    管理您的B站账号，支持多账号切换和快速投稿
+                    Quản lý tài khoản B站 của bạn, hỗ trợ chuyển đổi nhiều tài khoản và đăng tải nhanh
                   </Text>
                 </div>
                 
@@ -384,7 +382,7 @@ const SettingsPage: React.FC = () => {
                     type="primary"
                     size="large"
                     icon={<UserOutlined />}
-                    onClick={() => message.info('开发中，敬请期待', 3)}
+                    onClick={() => message.info('Đang phát triển, vui lòng chờ!', 3)}
                     style={{
                       borderRadius: '8px',
                       background: 'linear-gradient(45deg, #1890ff, #36cfc9)',
@@ -395,13 +393,13 @@ const SettingsPage: React.FC = () => {
                       fontSize: '16px'
                     }}
                   >
-                    管理B站账号
+                    Quản lý tài khoản B站
                   </Button>
                 </Space>
                 
                 <div style={{ marginTop: '32px', textAlign: 'left', maxWidth: '600px', margin: '32px auto 0' }}>
                   <Title level={4} style={{ color: '#ffffff', marginBottom: '16px' }}>
-                    功能特点
+                    Tính năng
                   </Title>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
                     <div style={{ 
@@ -410,10 +408,10 @@ const SettingsPage: React.FC = () => {
                       borderRadius: '8px',
                       border: '1px solid #404040'
                     }}>
-                      <Text strong style={{ color: '#1890ff' }}>多账号支持</Text>
+                      <Text strong style={{ color: '#1890ff' }}>Hỗ trợ nhiều tài khoản</Text>
                       <br />
                       <Text type="secondary" style={{ color: '#b0b0b0' }}>
-                        支持添加多个B站账号，方便管理和切换
+                        Thêm nhiều tài khoản B站, dễ quản lý và chuyển đổi
                       </Text>
                     </div>
                     <div style={{ 
@@ -422,10 +420,10 @@ const SettingsPage: React.FC = () => {
                       borderRadius: '8px',
                       border: '1px solid #404040'
                     }}>
-                      <Text strong style={{ color: '#52c41a' }}>安全登录</Text>
+                      <Text strong style={{ color: '#52c41a' }}>Đăng nhập an toàn</Text>
                       <br />
                       <Text type="secondary" style={{ color: '#b0b0b0' }}>
-                        使用Cookie导入，避免风控，安全可靠
+                        Nhập Cookie, tránh kiểm soát rủi ro, an toàn đáng tin cậy
                       </Text>
                     </div>
                     <div style={{ 
@@ -434,10 +432,10 @@ const SettingsPage: React.FC = () => {
                       borderRadius: '8px',
                       border: '1px solid #404040'
                     }}>
-                      <Text strong style={{ color: '#faad14' }}>快速投稿</Text>
+                      <Text strong style={{ color: '#faad14' }}>Đăng tải nhanh</Text>
                       <br />
                       <Text type="secondary" style={{ color: '#b0b0b0' }}>
-                        在切片详情页直接选择账号投稿，操作简单
+                        Chọn tài khoản đăng tải trực tiếp tại trang chi tiết đoạn, thao tác đơn giản
                       </Text>
                     </div>
                     <div style={{ 
@@ -446,10 +444,10 @@ const SettingsPage: React.FC = () => {
                       borderRadius: '8px',
                       border: '1px solid #404040'
                     }}>
-                      <Text strong style={{ color: '#722ed1' }}>批量管理</Text>
+                      <Text strong style={{ color: '#722ed1' }}>Quản lý hàng loạt</Text>
                       <br />
                       <Text type="secondary" style={{ color: '#b0b0b0' }}>
-                        支持批量上传多个切片，提高效率
+                        Hỗ trợ tải lên nhiều đoạn cùng lúc, tăng hiệu quả
                       </Text>
                     </div>
                   </div>
@@ -464,7 +462,7 @@ const SettingsPage: React.FC = () => {
           visible={showBilibiliManager}
           onClose={() => setShowBilibiliManager(false)}
           onUploadSuccess={() => {
-            message.success('操作成功')
+            message.success('Thao tác thành công')
           }}
         />
       </div>

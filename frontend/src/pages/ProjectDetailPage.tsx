@@ -150,7 +150,7 @@ const ProjectDetailPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to load project:', error)
-      message.error('加载项目失败')
+      message.error('Tải dự án thất bại')
     }
   }
 
@@ -170,11 +170,11 @@ const ProjectDetailPage: React.FC = () => {
     if (!id) return
     try {
       await projectApi.startProcessing(id)
-      message.success('开始处理')
+      message.success('Bắt đầu xử lý')
       loadProcessingStatus()
     } catch (error) {
       console.error('Failed to start processing:', error)
-      message.error('启动处理失败')
+      message.error('Khởi động xử lý thất bại')
     }
   }
 
@@ -190,10 +190,10 @@ const ProjectDetailPage: React.FC = () => {
         created_at: new Date().toISOString()
       })
       setShowCreateCollection(false)
-      message.success('合集创建成功')
+      message.success('Tạo bộ sưu tập thành công')
     } catch (error) {
       console.error('Failed to create collection:', error)
-      message.error('创建合集失败')
+      message.error('Tạo bộ sưu tập thất bại')
     }
   }
 
@@ -206,10 +206,10 @@ const ProjectDetailPage: React.FC = () => {
     if (!id) return
     try {
       await removeClipFromCollection(id, collectionId, clipId)
-      message.success('切片已从合集中移除')
+      message.success('Đoạn đã được xóa khỏi bộ sưu tập')
     } catch (error) {
       console.error('Failed to remove clip from collection:', error)
-      message.error('移除切片失败')
+      message.error('Xóa đoạn khỏi bộ sưu tập thất bại')
     }
   }
 
@@ -219,10 +219,10 @@ const ProjectDetailPage: React.FC = () => {
       await deleteCollection(id, collectionId)
       setShowCollectionDetail(false)
       setSelectedCollection(null)
-      message.success('合集已删除')
+      message.success('Bộ sưu tập đã được xóa')
     } catch (error) {
       console.error('Failed to delete collection:', error)
-      message.error('删除合集失败')
+      message.error('Xóa bộ sưu tập thất bại')
     }
   }
 
@@ -230,10 +230,10 @@ const ProjectDetailPage: React.FC = () => {
     if (!id) return
     try {
       await reorderCollectionClips(id, collectionId, newClipIds)
-      message.success('合集顺序已更新')
+      message.success('Thứ tự bộ sưu tập đã được cập nhật')
     } catch (error) {
       console.error('Failed to reorder collection clips:', error)
-      message.error('更新合集顺序失败')
+      message.error('Cập nhật thứ tự bộ sưu tập thất bại')
     }
   }
 
@@ -241,10 +241,10 @@ const ProjectDetailPage: React.FC = () => {
     if (!id) return
     try {
       await addClipToCollection(id, collectionId, clipIds)
-      message.success('切片已添加到合集')
+      message.success('Đoạn đã được thêm vào bộ sưu tập')
     } catch (error) {
       console.error('Failed to add clip to collection:', error)
-      message.error('添加切片失败')
+      message.error('Thêm đoạn vào bộ sưu tập thất bại')
     }
   }
 
@@ -284,12 +284,12 @@ const ProjectDetailPage: React.FC = () => {
     return (
       <Content style={{ padding: '24px' }}>
         <Alert
-          message="加载失败"
-          description={error || '项目不存在'}
+          message="Tải thất bại"
+          description={error || 'Dự án không tồn tại'}
           type="error"
           action={
             <Button size="small" onClick={() => navigate('/')}>
-              返回首页
+              Về trang chủ
             </Button>
           }
         />
@@ -308,7 +308,7 @@ const ProjectDetailPage: React.FC = () => {
             onClick={() => navigate('/')}
             style={{ padding: 0, marginBottom: '8px' }}
           >
-            返回项目列表
+            Quay lại danh sách dự án
           </Button>
           <Title level={2} style={{ margin: 0 }}>
             {currentProject.name}
@@ -322,7 +322,7 @@ const ProjectDetailPage: React.FC = () => {
               onClick={handleStartProcessing}
               loading={statusLoading}
             >
-              开始处理
+              Bắt đầu xử lý
             </Button>
           )}
         </Space>
@@ -336,9 +336,9 @@ const ProjectDetailPage: React.FC = () => {
             <Card style={{ marginBottom: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <div>
-                  <Title level={4} style={{ margin: 0 }}>AI推荐合集</Title>
+                  <Title level={4} style={{ margin: 0 }}>Bộ sưu tập AI đề xuất</Title>
                   <Text type="secondary">
-                    AI 已为您推荐了 {currentProject.collections.length} 个主题合集
+                    AI đã đề xuất {currentProject.collections.length} bộ sưu tập chủ đề cho bạn
                   </Text>
                 </div>
                 <Button 
@@ -355,7 +355,7 @@ const ProjectDetailPage: React.FC = () => {
                     fontSize: '14px'
                   }}
                 >
-                  创建合集
+                  Tạo bộ sưu tập
                 </Button>
               </div>
               
@@ -411,16 +411,16 @@ const ProjectDetailPage: React.FC = () => {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
               <div>
-                <Title level={4} style={{ margin: 0, color: '#ffffff', fontWeight: 600 }}>视频片段</Title>
+                <Title level={4} style={{ margin: 0, color: '#ffffff', fontWeight: 600 }}>Đoạn video</Title>
                 <Text type="secondary" style={{ color: '#b0b0b0', fontSize: '14px' }}>
-                  AI 已为您生成了 {currentProject.clips?.length || 0} 个精彩片段
+                  AI đã tạo {currentProject.clips?.length || 0} đoạn nổi bật cho bạn
                 </Text>
               </div>
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 {/* 排序控件 - 暗黑主题优化 */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Text style={{ fontSize: '13px', color: '#b0b0b0', fontWeight: 500 }}>排序</Text>
+                  <Text style={{ fontSize: '13px', color: '#b0b0b0', fontWeight: 500 }}>Sắp xếp</Text>
                   <Radio.Group
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
@@ -468,7 +468,7 @@ const ProjectDetailPage: React.FC = () => {
                          transition: 'all 0.2s ease'
                        }}
                      >
-                       评分
+                       Điểm
                      </Radio.Button>
                   </Radio.Group>
                 </div>
@@ -489,7 +489,7 @@ const ProjectDetailPage: React.FC = () => {
                         fontSize: '14px'
                       }}
                     >
-                      创建合集
+                      Tạo bộ sưu tập
                     </Button>
                   )}
                 </Space>
@@ -559,9 +559,9 @@ const ProjectDetailPage: React.FC = () => {
               image={<PlayCircleOutlined style={{ fontSize: '64px', color: '#d9d9d9' }} />}
               description={
                 <div>
-                  <Text>项目还未完成处理</Text>
+                  <Text>Dự án chưa xử lý xong</Text>
                   <br />
-                  <Text type="secondary">处理完成后可查看视频片段和AI合集</Text>
+                  <Text type="secondary">Sau khi xử lý xong bạn có thể xem đoạn video và bộ sưu tập AI</Text>
                 </div>
               }
             />
@@ -569,7 +569,7 @@ const ProjectDetailPage: React.FC = () => {
         </div>
       )}
 
-      {/* 创建合集模态框 */}
+      {/* Tạo bộ sưu tập模态框 */}
       <CreateCollectionModal
         visible={showCreateCollection}
         clips={currentProject.clips || []}

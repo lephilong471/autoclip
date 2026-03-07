@@ -44,6 +44,8 @@
 }
 ```
 
+**QUAN TRỌNG: Tất cả tiêu đề đầu ra phải bằng tiếng Việt.**
+
  ## 注意事项：
 - 输出的`key`必须是输入片段的`id`，且为字符串。
 - `value`必须是一个字符串，而不是数组。

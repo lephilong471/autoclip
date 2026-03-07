@@ -37,13 +37,13 @@ class SubtitleEditorApi {
   private baseUrl = '/api/v1/subtitle-editor'
 
   /**
-   * 获取片段的字粒度字幕数据
+   * Lấy dữ liệu phụ đề chi tiết theo từ của clip
    */
   async getClipSubtitles(projectId: string, clipId: string): Promise<SubtitleDataResponse> {
     const response = await fetch(`${this.baseUrl}/${projectId}/clips/${clipId}/subtitles`)
     
     if (!response.ok) {
-      throw new Error(`获取字幕数据失败: ${response.statusText}`)
+      throw new Error(`Lấy dữ liệu phụ đề thất bại: ${response.statusText}`)
     }
     
     return response.json()
@@ -73,21 +73,21 @@ class SubtitleEditorApi {
 
     if (!response.ok) {
       const errorText = await response.text()
-      throw new Error(`编辑视频失败: ${errorText}`)
+      throw new Error(`Chỉnh sửa video thất bại: ${errorText}`)
     }
 
     return response.json()
   }
 
   /**
-   * 获取编辑后的视频文件URL
+   * Lấy URL file video đã chỉnh sửa
    */
   getEditedVideoUrl(projectId: string, clipId: string): string {
     return `${this.baseUrl}/${projectId}/clips/${clipId}/edited-video`
   }
 
   /**
-   * 创建编辑预览片段
+   * Tạo đoạn xem trước chỉnh sửa
    */
   async createEditPreview(
     projectId: string, 
@@ -117,14 +117,14 @@ class SubtitleEditorApi {
   }
 
   /**
-   * 获取预览片段文件URL
+   * Lấy URL file đoạn xem trước
    */
   getPreviewSegmentUrl(projectId: string, clipId: string, segmentId: string): string {
     return `${this.baseUrl}/${projectId}/clips/${clipId}/preview/${segmentId}`
   }
 
   /**
-   * 下载编辑后的视频
+   * Tải video đã chỉnh sửa
    */
   async downloadEditedVideo(projectId: string, clipId: string, filename?: string): Promise<void> {
     const url = this.getEditedVideoUrl(projectId, clipId)
@@ -133,7 +133,7 @@ class SubtitleEditorApi {
       const response = await fetch(url)
       
       if (!response.ok) {
-        throw new Error(`下载失败: ${response.statusText}`)
+        throw new Error(`Tải xuống thất bại: ${response.statusText}`)
       }
 
       const blob = await response.blob()
@@ -154,7 +154,7 @@ class SubtitleEditorApi {
   }
 
   /**
-   * 验证编辑操作
+   * Xác thực thao tác chỉnh sửa
    */
   async validateEditOperations(
     projectId: string, 
@@ -162,21 +162,21 @@ class SubtitleEditorApi {
     deletedSegments: string[]
   ): Promise<{ valid: boolean; error?: string }> {
     try {
-      // 先获取字幕数据来验证
+      // Lấy dữ liệu phụ đề để xác thực
       const subtitleData = await this.getClipSubtitles(projectId, clipId)
       
-      // 检查删除的字幕段是否存在
+      // Kiểm tra các đoạn phụ đề cần xóa có tồn tại
       const existingIds = new Set(subtitleData.segments.map(seg => seg.id))
       const invalidIds = deletedSegments.filter(id => !existingIds.has(id))
       
       if (invalidIds.length > 0) {
         return {
           valid: false,
-          error: `无效的字幕段ID: ${invalidIds.join(', ')}`
+          error: `ID đoạn phụ đề không hợp lệ: ${invalidIds.join(', ')}`
         }
       }
 
-      // 检查删除后是否还有剩余内容
+      // Kiểm tra còn nội dung sau khi xóa
       const remainingSegments = subtitleData.segments.filter(
         seg => !deletedSegments.includes(seg.id)
       )
@@ -184,7 +184,7 @@ class SubtitleEditorApi {
       if (remainingSegments.length === 0) {
         return {
           valid: false,
-          error: '删除所有字幕段后没有剩余内容'
+          error: 'Không còn nội dung sau khi xóa tất cả đoạn phụ đề'
         }
       }
 
@@ -192,7 +192,7 @@ class SubtitleEditorApi {
     } catch (error) {
       return {
         valid: false,
-        error: `验证失败: ${error instanceof Error ? error.message : '未知错误'}`
+        error: `Xác thực thất bại: ${error instanceof Error ? error.message : 'Lỗi không xác định'}`
       }
     }
   }

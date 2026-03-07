@@ -111,7 +111,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               gap: '4px'
             }}
           >
-            {collection.collection_type === 'ai_recommended' ? 'AI推荐' : '手动创建'}
+            {collection.collection_type === 'ai_recommended' ? 'AI đề xuất' : 'Tạo thủ công'}
           </div>
           
           {/* 左下角片段数量 */}
@@ -131,7 +131,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               gap: '4px'
             }}
           >
-            {collectionClips.length} 个片段
+            {collectionClips.length} đoạn
           </div>
           
           {/* 右下角总时长 */}
@@ -209,7 +209,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
             alignItems: 'flex-start'
           }}>
             <Tooltip 
-              title={collection.collection_summary || '暂无描述'} 
+              title={collection.collection_summary || 'Chưa có mô tả'} 
               placement="top" 
               overlayStyle={{ maxWidth: '300px' }}
               mouseEnterDelay={0.5}
@@ -229,7 +229,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
                   width: '100%'
                 }}
               >
-                {collection.collection_summary || '暂无描述'}
+                {collection.collection_summary || 'Chưa có mô tả'}
               </div>
             </Tooltip>
           </div>
@@ -258,7 +258,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               background: 'rgba(79, 172, 254, 0.1)'
             }}
           >
-            播放
+            Phát
           </Button>
           {onGenerateVideo && (
             <Button 
@@ -276,14 +276,14 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
                 background: 'rgba(82, 196, 26, 0.1)'
               }}
             >
-              下载
+              Tải xuống
             </Button>
           )}
           <Button 
             type="text" 
             size="small"
             icon={<EditOutlined />}
-            onClick={() => message.info('开发中，敬请期待', 3)}
+            onClick={() => message.info('Đang phát triển, vui lòng chờ!', 3)}
             style={{
               color: '#ff7875',
               border: '1px solid rgba(255, 120, 117, 0.3)',
@@ -294,7 +294,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({
               background: 'rgba(255, 120, 117, 0.1)'
             }}
           >
-            投稿
+            Đăng tải
           </Button>
         </div>
       </div>

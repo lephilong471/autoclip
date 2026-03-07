@@ -15,28 +15,28 @@ export const useCollectionVideoDownload = () => {
     setIsGenerating(true)
     
     try {
-      // 直接按用户当前调整的顺序生成合集视频
-      message.info('正在按您的顺序生成合集视频...')
+      // Tạo video hợp tuyển theo thứ tự người dùng đã chỉnh
+      message.info('Đang tạo video hợp tuyển theo thứ tự của bạn...')
       
-      // 生成合集视频（按用户调整的顺序）
+      // Tạo video hợp tuyển
       await projectApi.generateCollectionVideo(projectId, collectionId)
       
-      // 等待1秒让后端完成文件生成，然后下载
-      message.success('合集视频生成成功，正在下载...')
+      // Chờ 1 giây để backend hoàn thành, rồi tải xuống
+      message.success('Tạo video thành công, đang tải xuống...')
       
       setTimeout(async () => {
         try {
           await projectApi.downloadVideo(projectId, undefined, collectionId)
-          message.success('合集视频下载完成')
+          message.success('Tải video hợp tuyển hoàn tất')
         } catch (downloadError) {
-          console.error('下载失败:', downloadError)
-          message.error('下载失败，请稍后重试')
+          console.error('Tải xuống thất bại:', downloadError)
+          message.error('Tải xuống thất bại, vui lòng thử lại sau')
         }
       }, 1000)
       
     } catch (error) {
-      console.error('生成合集视频失败:', error)
-      message.error('生成合集视频失败')
+      console.error('Tạo video hợp tuyển thất bại:', error)
+      message.error('Tạo video hợp tuyển thất bại')
     } finally {
       setIsGenerating(false)
     }

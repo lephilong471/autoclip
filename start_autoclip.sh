@@ -1,38 +1,38 @@
 #!/bin/bash
 
-# AutoClip 一键启动脚本
-# 版本: 2.0
-# 功能: 启动完整的AutoClip系统（后端API + Celery Worker + 前端界面）
+# Script khởi động AutoClip một lần
+# Phiên bản: 2.0
+# Chức năng: Khởi động hệ thống AutoClip đầy đủ (API backend + Celery Worker + Giao diện frontend)
 
 set -euo pipefail
 
 # =============================================================================
-# 配置区域
+# Vùng cấu hình
 # =============================================================================
 
-# 服务端口配置
+# Cấu hình cổng dịch vụ
 BACKEND_PORT=8000
 FRONTEND_PORT=3000
 REDIS_PORT=6379
 
-# 服务超时配置
+# Cấu hình thời gian chờ dịch vụ
 BACKEND_STARTUP_TIMEOUT=60
 FRONTEND_STARTUP_TIMEOUT=90
 HEALTH_CHECK_TIMEOUT=10
 
-# 日志配置
+# Cấu hình nhật ký
 LOG_DIR="logs"
 BACKEND_LOG="$LOG_DIR/backend.log"
 FRONTEND_LOG="$LOG_DIR/frontend.log"
 CELERY_LOG="$LOG_DIR/celery.log"
 
-# PID文件
+# File PID
 BACKEND_PID_FILE="backend.pid"
 FRONTEND_PID_FILE="frontend.pid"
 CELERY_PID_FILE="celery.pid"
 
 # =============================================================================
-# 颜色和样式定义
+# Định nghĩa màu sắc và kiểu
 # =============================================================================
 
 RED='\033[0;31m'
@@ -44,7 +44,7 @@ CYAN='\033[0;36m'
 WHITE='\033[1;37m'
 NC='\033[0m' # No Color
 
-# 图标定义
+# Định nghĩa biểu tượng
 ICON_SUCCESS="✅"
 ICON_ERROR="❌"
 ICON_WARNING="⚠️"
@@ -57,7 +57,7 @@ ICON_WEB="🌐"
 ICON_HEALTH="💚"
 
 # =============================================================================
-# 工具函数
+# Hàm tiện ích
 # =============================================================================
 
 log_info() {
@@ -85,37 +85,37 @@ log_step() {
     echo -e "\n${CYAN}${ICON_GEAR} $1${NC}"
 }
 
-# 检查命令是否存在
+# Kiểm tra lệnh có tồn tại
 command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-# 检查端口是否被占用
+# Kiểm tra cổng có đang dùng
 port_in_use() {
     lsof -i ":$1" >/dev/null 2>&1
 }
 
-# 等待服务启动
+# Chờ dịch vụ khởi động
 wait_for_service() {
     local url="$1"
     local timeout="$2"
     local service_name="$3"
     
-    log_info "等待 $service_name 启动..."
+    log_info "Đang chờ $service_name khởi động..."
     
     for i in $(seq 1 "$timeout"); do
         if curl -fsS "$url" >/dev/null 2>&1; then
-            log_success "$service_name 已启动"
+            log_success "$service_name đã khởi động"
             return 0
         fi
         sleep 1
     done
     
-    log_error "$service_name 启动超时"
+    log_error "Hết thời gian chờ $service_name khởi động"
     return 1
 }
 
-# 检查进程是否运行
+# Kiểm tra tiến trình có chạy
 process_running() {
     local pid_file="$1"
     if [[ -f "$pid_file" ]]; then
@@ -129,7 +129,7 @@ process_running() {
     return 1
 }
 
-# 停止进程
+# Dừng tiến trình
 stop_process() {
     local pid_file="$1"
     local service_name="$2"
@@ -137,11 +137,11 @@ stop_process() {
     if [[ -f "$pid_file" ]]; then
         local pid=$(cat "$pid_file")
         if kill -0 "$pid" 2>/dev/null; then
-            log_info "停止 $service_name (PID: $pid)..."
+            log_info "Đang dừng $service_name (PID: $pid)..."
             kill "$pid" 2>/dev/null || true
             sleep 2
             if kill -0 "$pid" 2>/dev/null; then
-                log_warning "强制停止 $service_name..."
+                log_warning "Đang ép dừng $service_name..."
                 kill -9 "$pid" 2>/dev/null || true
             fi
         fi
@@ -150,126 +150,126 @@ stop_process() {
 }
 
 # =============================================================================
-# 环境检查函数
+# Hàm kiểm tra môi trường
 # =============================================================================
 
 check_environment() {
-    log_header "环境检查"
+    log_header "Kiểm tra môi trường"
     
-    # 检查操作系统
+    # Kiểm tra hệ điều hành
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        log_success "检测到 macOS 系统"
+        log_success "Phát hiện hệ thống macOS"
     elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        log_success "检测到 Linux 系统"
+        log_success "Phát hiện hệ thống Linux"
     else
-        log_warning "未识别的操作系统: $OSTYPE"
+        log_warning "Hệ điều hành không xác định: $OSTYPE"
     fi
     
-    # 检查必要的命令
+    # Kiểm tra các lệnh cần thiết
     local required_commands=("python3" "node" "npm" "redis-cli")
     for cmd in "${required_commands[@]}"; do
         if command_exists "$cmd"; then
-            log_success "$cmd 已安装"
+            log_success "$cmd đã cài đặt"
         else
-            log_error "$cmd 未安装，请先安装"
+            log_error "$cmd chưa cài đặt, vui lòng cài đặt trước"
             exit 1
         fi
     done
     
-    # 检查Python版本
+    # Kiểm tra phiên bản Python
     local python_version=$(python3 --version 2>&1 | cut -d' ' -f2)
-    log_info "Python 版本: $python_version"
+    log_info "Phiên bản Python: $python_version"
     
-    # 检查Node.js版本
+    # Kiểm tra phiên bản Node.js
     local node_version=$(node --version)
-    log_info "Node.js 版本: $node_version"
+    log_info "Phiên bản Node.js: $node_version"
     
-    # 检查虚拟环境
+    # Kiểm tra môi trường ảo
     if [[ ! -d "venv" ]]; then
-        log_error "虚拟环境不存在，请先创建: python3 -m venv venv"
+        log_error "Môi trường ảo không tồn tại, vui lòng tạo: python3 -m venv venv"
         exit 1
     fi
-    log_success "虚拟环境存在"
+    log_success "Môi trường ảo tồn tại"
     
-    # 检查项目结构
+    # Kiểm tra cấu trúc dự án
     local required_dirs=("backend" "frontend" "data")
     for dir in "${required_dirs[@]}"; do
         if [[ -d "$dir" ]]; then
-            log_success "目录 $dir 存在"
+            log_success "Thư mục $dir tồn tại"
         else
-            log_error "目录 $dir 不存在"
+            log_error "Thư mục $dir không tồn tại"
             exit 1
         fi
     done
 }
 
 # =============================================================================
-# 服务启动函数
+# Hàm khởi động dịch vụ
 # =============================================================================
 
 start_redis() {
-    log_step "启动 Redis 服务"
+    log_step "Khởi động dịch vụ Redis"
     
     if redis-cli ping >/dev/null 2>&1; then
-        log_success "Redis 服务已运行"
+        log_success "Dịch vụ Redis đang chạy"
         return 0
     fi
     
-    log_info "启动 Redis 服务..."
+    log_info "Đang khởi động dịch vụ Redis..."
     
     if [[ "$OSTYPE" == "darwin"* ]]; then
         if command_exists brew; then
             brew services start redis
             sleep 3
         else
-            log_error "请手动启动 Redis 服务"
+            log_error "Vui lòng khởi động dịch vụ Redis thủ công"
             exit 1
         fi
     else
         systemctl start redis-server 2>/dev/null || service redis-server start 2>/dev/null || {
-            log_error "无法启动 Redis 服务，请手动启动"
+            log_error "Không thể khởi động dịch vụ Redis, vui lòng khởi động thủ công"
             exit 1
         }
     fi
     
     if redis-cli ping >/dev/null 2>&1; then
-        log_success "Redis 服务启动成功"
+        log_success "Dịch vụ Redis khởi động thành công"
     else
-        log_error "Redis 服务启动失败"
+        log_error "Dịch vụ Redis khởi động thất bại"
         exit 1
     fi
 }
 
 setup_environment() {
-    log_step "设置环境"
+    log_step "Thiết lập môi trường"
     
-    # 创建日志目录
+    # Tạo thư mục nhật ký
     mkdir -p "$LOG_DIR"
     
-    # 激活虚拟环境
-    log_info "激活虚拟环境..."
+    # Kích hoạt môi trường ảo
+    log_info "Đang kích hoạt môi trường ảo..."
     source venv/bin/activate
     
-    # 设置Python路径
+    # Thiết lập đường dẫn Python
     : "${PYTHONPATH:=}"
     export PYTHONPATH="${PWD}:${PYTHONPATH}"
-    log_info "设置 Python 路径: $PYTHONPATH"
+    log_info "Đặt đường dẫn Python: $PYTHONPATH"
     
-    # 加载环境变量
+    # Tải biến môi trường
     if [[ -f ".env" ]]; then
-        log_info "加载环境变量..."
+        log_info "Đang tải biến môi trường..."
         set -a
         source .env
         set +a
-        log_success "环境变量加载成功"
+        log_success "Tải biến môi trường thành công"
     else
-        log_warning ".env 文件不存在，使用默认配置"
-        # 创建默认环境变量文件
+        log_warning "File .env không tồn tại, sử dụng cấu hình mặc định"
+        # Tạo file biến môi trường mặc định
         if [[ ! -f ".env" ]]; then
-            log_info "创建默认 .env 文件..."
+            log_info "Đang tạo file .env mặc định..."
             cp env.example .env 2>/dev/null || {
                 cat > .env << EOF
-# AutoClip 环境配置
+# Cấu hình môi trường AutoClip
 DATABASE_URL=sqlite:///./data/autoclip.db
 REDIS_URL=redis://localhost:6379/0
 API_DASHSCOPE_API_KEY=
@@ -278,28 +278,28 @@ LOG_LEVEL=INFO
 ENVIRONMENT=development
 DEBUG=true
 EOF
-                log_success "已创建默认 .env 文件"
+                log_success "Đã tạo file .env mặc định"
             }
         fi
     fi
     
-    # 检查Python依赖
-    log_info "检查 Python 依赖..."
+    # Kiểm tra phụ thuộc Python
+    log_info "Đang kiểm tra phụ thuộc Python..."
     if ! python -c "import fastapi, celery, sqlalchemy" 2>/dev/null; then
-        log_warning "缺少依赖，正在安装..."
+        log_warning "Thiếu phụ thuộc, đang cài đặt..."
         pip install -r requirements.txt
     fi
-    log_success "Python 依赖检查完成"
+    log_success "Kiểm tra phụ thuộc Python hoàn tất"
 }
 
 init_database() {
-    log_step "初始化数据库"
+    log_step "Khởi tạo cơ sở dữ liệu"
     
-    # 确保数据目录存在
+    # Đảm bảo thư mục dữ liệu tồn tại
     mkdir -p data
     
-    # 初始化数据库
-    log_info "创建数据库表..."
+    # Khởi tạo cơ sở dữ liệu
+    log_info "Đang tạo bảng cơ sở dữ liệu..."
     if python -c "
 import sys
 sys.path.insert(0, '.')
@@ -307,26 +307,26 @@ from backend.core.database import engine, Base
 from backend.models import project, task, clip, collection, bilibili
 try:
     Base.metadata.create_all(bind=engine)
-    print('数据库表创建成功')
+    print('Tạo bảng cơ sở dữ liệu thành công')
 except Exception as e:
-    print(f'数据库初始化失败: {e}')
+    print(f'Khởi tạo cơ sở dữ liệu thất bại: {e}')
     sys.exit(1)
 " 2>/dev/null; then
-        log_success "数据库初始化成功"
+        log_success "Khởi tạo cơ sở dữ liệu thành công"
     else
-        log_error "数据库初始化失败"
+        log_error "Khởi tạo cơ sở dữ liệu thất bại"
         exit 1
     fi
 }
 
 start_celery() {
-    log_step "启动 Celery Worker"
+    log_step "Khởi động Celery Worker"
     
-    # 停止现有的Celery进程
+    # Dừng tiến trình Celery hiện có
     pkill -f "celery.*worker" 2>/dev/null || true
     sleep 2
     
-    log_info "启动 Celery Worker..."
+    log_info "Đang khởi động Celery Worker..."
     nohup celery -A backend.core.celery_app worker \
         --loglevel=info \
         --concurrency=2 \
@@ -337,28 +337,28 @@ start_celery() {
     local celery_pid=$!
     echo "$celery_pid" > "$CELERY_PID_FILE"
     
-    # 等待Worker启动
+    # Chờ Worker khởi động
     sleep 5
     
     if pgrep -f "celery.*worker" >/dev/null; then
-        log_success "Celery Worker 已启动 (PID: $celery_pid)"
+        log_success "Celery Worker đã khởi động (PID: $celery_pid)"
     else
-        log_error "Celery Worker 启动失败"
-        log_info "查看日志: tail -f $CELERY_LOG"
+        log_error "Celery Worker khởi động thất bại"
+        log_info "Xem nhật ký: tail -f $CELERY_LOG"
         exit 1
     fi
 }
 
 start_backend() {
-    log_step "启动后端 API 服务"
+    log_step "Khởi động dịch vụ API backend"
     
-    # 检查端口是否被占用
+    # Kiểm tra cổng có đang dùng
     if port_in_use "$BACKEND_PORT"; then
-        log_warning "端口 $BACKEND_PORT 已被占用，尝试停止现有服务..."
-        stop_process "$BACKEND_PID_FILE" "后端服务"
+        log_warning "Cổng $BACKEND_PORT đã được sử dụng, đang thử dừng dịch vụ hiện có..."
+        stop_process "$BACKEND_PID_FILE" "Dịch vụ backend"
     fi
     
-    log_info "启动后端服务 (端口: $BACKEND_PORT)..."
+    log_info "Đang khởi động dịch vụ backend (cổng: $BACKEND_PORT)..."
     nohup python -m uvicorn backend.main:app \
         --host 0.0.0.0 \
         --port "$BACKEND_PORT" \
@@ -374,178 +374,178 @@ start_backend() {
     local backend_pid=$!
     echo "$backend_pid" > "$BACKEND_PID_FILE"
     
-    # 等待后端启动
-    if wait_for_service "http://localhost:$BACKEND_PORT/api/v1/health/" "$BACKEND_STARTUP_TIMEOUT" "后端服务"; then
-        log_success "后端服务已启动 (PID: $backend_pid)"
+    # Chờ backend khởi động
+    if wait_for_service "http://localhost:$BACKEND_PORT/api/v1/health/" "$BACKEND_STARTUP_TIMEOUT" "Dịch vụ backend"; then
+        log_success "Dịch vụ backend đã khởi động (PID: $backend_pid)"
     else
-        log_error "后端服务启动失败"
-        log_info "查看日志: tail -f $BACKEND_LOG"
+        log_error "Dịch vụ backend khởi động thất bại"
+        log_info "Xem nhật ký: tail -f $BACKEND_LOG"
         exit 1
     fi
 }
 
 start_frontend() {
-    log_step "启动前端服务"
+    log_step "Khởi động dịch vụ frontend"
     
-    # 检查端口是否被占用
+    # Kiểm tra cổng có đang dùng
     if port_in_use "$FRONTEND_PORT"; then
-        log_warning "端口 $FRONTEND_PORT 已被占用，尝试停止现有服务..."
-        stop_process "$FRONTEND_PID_FILE" "前端服务"
+        log_warning "Cổng $FRONTEND_PORT đã được sử dụng, đang thử dừng dịch vụ hiện có..."
+        stop_process "$FRONTEND_PID_FILE" "Dịch vụ frontend"
     fi
     
-    # 进入前端目录
+    # Vào thư mục frontend
     cd frontend || {
-        log_error "无法进入前端目录"
+        log_error "Không thể vào thư mục frontend"
         exit 1
     }
     
-    # 检查前端依赖
+    # Kiểm tra phụ thuộc frontend
     if [[ ! -d "node_modules" ]]; then
-        log_info "安装前端依赖..."
+        log_info "Đang cài đặt phụ thuộc frontend..."
         npm install
     fi
     
-    log_info "启动前端服务 (端口: $FRONTEND_PORT)..."
+    log_info "Đang khởi động dịch vụ frontend (cổng: $FRONTEND_PORT)..."
     nohup npm run dev -- --host 0.0.0.0 --port "$FRONTEND_PORT" \
         > "../$FRONTEND_LOG" 2>&1 &
     
     local frontend_pid=$!
     echo "$frontend_pid" > "../$FRONTEND_PID_FILE"
     
-    # 返回项目根目录
+    # Quay về thư mục gốc dự án
     cd ..
     
-    # 等待前端启动
-    if wait_for_service "http://localhost:$FRONTEND_PORT/" "$FRONTEND_STARTUP_TIMEOUT" "前端服务"; then
-        log_success "前端服务已启动 (PID: $frontend_pid)"
+    # Chờ frontend khởi động
+    if wait_for_service "http://localhost:$FRONTEND_PORT/" "$FRONTEND_STARTUP_TIMEOUT" "Dịch vụ frontend"; then
+        log_success "Dịch vụ frontend đã khởi động (PID: $frontend_pid)"
     else
-        log_error "前端服务启动失败"
-        log_info "查看日志: tail -f $FRONTEND_LOG"
+        log_error "Dịch vụ frontend khởi động thất bại"
+        log_info "Xem nhật ký: tail -f $FRONTEND_LOG"
         exit 1
     fi
 }
 
 # =============================================================================
-# 健康检查函数
+# Hàm kiểm tra sức khỏe
 # =============================================================================
 
 health_check() {
-    log_header "系统健康检查"
+    log_header "Kiểm tra sức khỏe hệ thống"
     
     local all_healthy=true
     
-    # 检查后端
-    log_info "检查后端服务..."
+    # Kiểm tra backend
+    log_info "Đang kiểm tra dịch vụ backend..."
     if curl -fsS "http://localhost:$BACKEND_PORT/api/v1/health/" >/dev/null 2>&1; then
-        log_success "后端服务健康"
+        log_success "Dịch vụ backend hoạt động tốt"
     else
-        log_error "后端服务不健康"
+        log_error "Dịch vụ backend không hoạt động"
         all_healthy=false
     fi
     
-    # 检查前端
-    log_info "检查前端服务..."
+    # Kiểm tra frontend
+    log_info "Đang kiểm tra dịch vụ frontend..."
     if curl -fsS "http://localhost:$FRONTEND_PORT/" >/dev/null 2>&1; then
-        log_success "前端服务健康"
+        log_success "Dịch vụ frontend hoạt động tốt"
     else
-        log_error "前端服务不健康"
+        log_error "Dịch vụ frontend không hoạt động"
         all_healthy=false
     fi
     
-    # 检查Redis
-    log_info "检查 Redis 服务..."
+    # Kiểm tra Redis
+    log_info "Đang kiểm tra dịch vụ Redis..."
     if redis-cli ping >/dev/null 2>&1; then
-        log_success "Redis 服务健康"
+        log_success "Dịch vụ Redis hoạt động tốt"
     else
-        log_error "Redis 服务不健康"
+        log_error "Dịch vụ Redis không hoạt động"
         all_healthy=false
     fi
     
-    # 检查Celery Worker
-    log_info "检查 Celery Worker..."
+    # Kiểm tra Celery Worker
+    log_info "Đang kiểm tra Celery Worker..."
     if pgrep -f "celery.*worker" >/dev/null; then
-        log_success "Celery Worker 健康"
+        log_success "Celery Worker hoạt động tốt"
     else
-        log_error "Celery Worker 不健康"
+        log_error "Celery Worker không hoạt động"
         all_healthy=false
     fi
     
     if [[ "$all_healthy" == true ]]; then
-        log_success "所有服务健康检查通过"
+        log_success "Tất cả kiểm tra sức khỏe dịch vụ đều đạt"
         return 0
     else
-        log_error "部分服务健康检查失败"
+        log_error "Một số dịch vụ kiểm tra sức khỏe thất bại"
         return 1
     fi
 }
 
 # =============================================================================
-# 清理函数
+# Hàm dọn dẹp
 # =============================================================================
 
 cleanup() {
-    log_header "清理服务"
+    log_header "Dọn dẹp dịch vụ"
     
-    stop_process "$BACKEND_PID_FILE" "后端服务"
-    stop_process "$FRONTEND_PID_FILE" "前端服务"
+    stop_process "$BACKEND_PID_FILE" "Dịch vụ backend"
+    stop_process "$FRONTEND_PID_FILE" "Dịch vụ frontend"
     stop_process "$CELERY_PID_FILE" "Celery Worker"
     
-    # 停止所有相关进程
+    # Dừng tất cả tiến trình liên quan
     pkill -f "celery.*worker" 2>/dev/null || true
     pkill -f "uvicorn.*backend.main:app" 2>/dev/null || true
     pkill -f "npm.*dev" 2>/dev/null || true
     
-    log_success "清理完成"
+    log_success "Dọn dẹp hoàn tất"
 }
 
 # =============================================================================
-# 显示系统信息
+# Hiển thị thông tin hệ thống
 # =============================================================================
 
 show_system_info() {
-    log_header "系统启动完成"
+    log_header "Khởi động hệ thống hoàn tất"
     
-    echo -e "${WHITE}🎉 AutoClip 系统已成功启动！${NC}"
+    echo -e "${WHITE}🎉 Hệ thống AutoClip đã khởi động thành công!${NC}"
     echo ""
-    echo -e "${CYAN}📊 服务状态:${NC}"
-    echo -e "  ${ICON_WEB} 后端 API:     http://localhost:$BACKEND_PORT"
-    echo -e "  ${ICON_WEB} 前端界面:     http://localhost:$FRONTEND_PORT"
-    echo -e "  ${ICON_WEB} API 文档:     http://localhost:$BACKEND_PORT/docs"
-    echo -e "  ${ICON_HEALTH} 健康检查:   http://localhost:$BACKEND_PORT/api/v1/health/"
+    echo -e "${CYAN}📊 Trạng thái dịch vụ:${NC}"
+    echo -e "  ${ICON_WEB} API Backend:  http://localhost:$BACKEND_PORT"
+    echo -e "  ${ICON_WEB} Giao diện:    http://localhost:$FRONTEND_PORT"
+    echo -e "  ${ICON_WEB} Tài liệu API: http://localhost:$BACKEND_PORT/docs"
+    echo -e "  ${ICON_HEALTH} Kiểm tra sức khỏe: http://localhost:$BACKEND_PORT/api/v1/health/"
     echo ""
-    echo -e "${CYAN}📝 日志文件:${NC}"
-    echo -e "  后端日志: tail -f $BACKEND_LOG"
-    echo -e "  前端日志: tail -f $FRONTEND_LOG"
-    echo -e "  Celery日志: tail -f $CELERY_LOG"
+    echo -e "${CYAN}📝 File nhật ký:${NC}"
+    echo -e "  Nhật ký backend: tail -f $BACKEND_LOG"
+    echo -e "  Nhật ký frontend: tail -f $FRONTEND_LOG"
+    echo -e "  Nhật ký Celery: tail -f $CELERY_LOG"
     echo ""
-    echo -e "${CYAN}🛑 停止系统:${NC}"
-    echo -e "  ./stop_autoclip.sh 或按 Ctrl+C"
+    echo -e "${CYAN}🛑 Dừng hệ thống:${NC}"
+    echo -e "  ./stop_autoclip.sh hoặc nhấn Ctrl+C"
     echo ""
-    echo -e "${YELLOW}💡 使用说明:${NC}"
-    echo -e "  1. 访问 http://localhost:$FRONTEND_PORT 使用前端界面"
-    echo -e "  2. 上传视频文件或输入B站链接"
-    echo -e "  3. 系统将自动启动AI处理流水线"
-    echo -e "  4. 实时查看处理进度和结果"
+    echo -e "${YELLOW}💡 Hướng dẫn sử dụng:${NC}"
+    echo -e "  1. Truy cập http://localhost:$FRONTEND_PORT để sử dụng giao diện"
+    echo -e "  2. Tải lên file video hoặc nhập liên kết B站"
+    echo -e "  3. Hệ thống sẽ tự động chạy pipeline xử lý AI"
+    echo -e "  4. Xem tiến độ và kết quả xử lý theo thời gian thực"
     echo ""
 }
 
 # =============================================================================
-# 信号处理
+# Xử lý tín hiệu
 # =============================================================================
 
 trap cleanup EXIT INT TERM
 
 # =============================================================================
-# 主函数
+# Hàm chính
 # =============================================================================
 
 main() {
-    log_header "AutoClip 系统启动器 v2.0"
+    log_header "Bộ khởi động hệ thống AutoClip v2.0"
     
-    # 环境检查
+    # Kiểm tra môi trường
     check_environment
     
-    # 启动服务
+    # Khởi động dịch vụ
     start_redis
     setup_environment
     init_database
@@ -553,21 +553,21 @@ main() {
     start_backend
     start_frontend
     
-    # 健康检查
+    # Kiểm tra sức khỏe
     if health_check; then
         show_system_info
         
-        # 保持脚本运行（不进行循环检查）
-        log_info "系统运行中... 按 Ctrl+C 停止"
-        log_info "如需检查系统状态，请运行: ./status_autoclip.sh"
+        # Giữ script chạy (không kiểm tra lặp)
+        log_info "Hệ thống đang chạy... Nhấn Ctrl+C để dừng"
+        log_info "Để kiểm tra trạng thái hệ thống, vui lòng chạy: ./status_autoclip.sh"
         while true; do
-            sleep 3600  # 每小时检查一次，减少频率
+            sleep 3600  # Kiểm tra mỗi giờ, giảm tần suất
         done
     else
-        log_error "系统启动失败，请检查日志"
+        log_error "Khởi động hệ thống thất bại, vui lòng kiểm tra nhật ký"
         exit 1
     fi
 }
 
-# 运行主函数
+# Chạy hàm chính
 main "$@"

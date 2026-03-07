@@ -1,5 +1,5 @@
 """
-文本处理工具
+Công cụ xử lý văn bản
 """
 import json
 import logging
@@ -7,11 +7,11 @@ import re
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 
-# 修复导入问题
+# Sửa lỗi import
 try:
     from ..core.shared_config import CHUNK_SIZE
 except ImportError:
-    # 如果相对导入失败，尝试绝对导入
+    # Nếu import tương đối thất bại, thử import tuyệt đối
     import sys
     from pathlib import Path
     backend_path = Path(__file__).parent.parent
@@ -24,19 +24,19 @@ import pysrt
 logger = logging.getLogger(__name__)
 
 class TextProcessor:
-    """文本处理工具类"""
+    """Lớp công cụ xử lý văn bản"""
     
     @staticmethod
     def chunk_text(text: str, chunk_size: int = CHUNK_SIZE) -> List[str]:
         """
-        将长文本按指定大小分块
+        Chia văn bản dài thành các đoạn theo kích thước chỉ định
         
         Args:
-            text: 输入文本
-            chunk_size: 分块大小
+            text: Văn bản đầu vào
+            chunk_size: Kích thước mỗi đoạn
             
         Returns:
-            文本块列表
+            Danh sách các đoạn văn bản
         """
         if len(text) <= chunk_size:
             return [text]
@@ -80,16 +80,16 @@ class TextProcessor:
     
     def chunk_srt_data(self, srt_data: List[Dict], interval_minutes: int = 30, pause_threshold_ms: int = 1000) -> List[Dict]:
         """
-        根据停顿时间，将SRT数据切分为大约相等时间长度的块。
-        这可以避免在对话中间断开。
+        Chia dữ liệu SRT thành các khối có thời lượng gần bằng nhau dựa trên khoảng dừng.
+        Tránh cắt đứt giữa cuộc hội thoại.
 
         Args:
-            srt_data: SRT数据列表
-            interval_minutes: 每个块的目标时间长度（分钟）
-            pause_threshold_ms: 识别为停顿的最小毫秒数
+            srt_data: Danh sách dữ liệu SRT
+            interval_minutes: Thời lượng mục tiêu mỗi khối (phút)
+            pause_threshold_ms: Số mili giây tối thiểu để nhận diện là khoảng dừng
 
         Returns:
-            结构化的块列表，其中的 srt_entries 不包含临时处理字段。
+            Danh sách khối có cấu trúc, srt_entries không chứa trường xử lý tạm.
         """
         if not srt_data:
             return []

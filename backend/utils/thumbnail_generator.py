@@ -1,5 +1,5 @@
 """
-视频缩略图生成工具
+Công cụ tạo ảnh xem trước video
 """
 import subprocess
 import logging
@@ -12,7 +12,7 @@ import io
 logger = logging.getLogger(__name__)
 
 class ThumbnailGenerator:
-    """视频缩略图生成器"""
+    """Trình tạo ảnh xem trước video"""
     
     def __init__(self):
         self.supported_formats = ['.mp4', '.avi', '.mov', '.mkv', '.webm', '.flv']
@@ -20,17 +20,17 @@ class ThumbnailGenerator:
     def generate_thumbnail(self, video_path: Path, output_path: Optional[Path] = None, 
                           time_offset: Optional[float] = None, width: int = 320, height: int = 180) -> Optional[Path]:
         """
-        生成视频缩略图 - 使用智能帧选择策略
+        Tạo ảnh xem trước video - Sử dụng chiến lược chọn khung hình thông minh
         
         Args:
-            video_path: 视频文件路径
-            output_path: 输出缩略图路径，如果为None则自动生成
-            time_offset: 提取时间点（秒），如果为None则自动选择最佳时间点
-            width: 缩略图宽度
-            height: 缩略图高度
+            video_path: Đường dẫn file video
+            output_path: Đường dẫn ảnh xem trước đầu ra, None thì tự tạo
+            time_offset: Điểm thời gian trích xuất (giây), None thì tự chọn điểm tốt nhất
+            width: Chiều rộng ảnh xem trước
+            height: Chiều cao ảnh xem trước
             
         Returns:
-            生成的缩略图路径，失败返回None
+            Đường dẫn ảnh xem trước đã tạo, thất bại trả về None
         """
         try:
             if not video_path.exists():
@@ -39,7 +39,7 @@ class ThumbnailGenerator:
             
             # 检查文件格式
             if video_path.suffix.lower() not in self.supported_formats:
-                logger.error(f"不支持的视频格式: {video_path.suffix}")
+                logger.error(f"Định dạng video không hỗ trợ: {video_path.suffix}")
                 return None
             
             # 生成输出路径
@@ -67,7 +67,7 @@ class ThumbnailGenerator:
                         '-y',
                         str(output_path)
                     ]
-                    logger.info(f"使用视频封面生成缩略图: {cover_path} -> {output_path}")
+                    logger.info(f"Dùng ảnh bìa video tạo ảnh xem trước: {cover_path} -> {output_path}")
                 else:
                     # 封面不存在，回退到默认时间点
                     time_offset = 1.0
@@ -81,7 +81,7 @@ class ThumbnailGenerator:
                         '-y',
                         str(output_path)
                     ]
-                    logger.info(f"封面不存在，回退到默认时间点: {time_offset}秒")
+                    logger.info(f"Ảnh bìa không tồn tại, dùng điểm thời gian mặc định: {time_offset}s")
             else:
                 # 使用指定时间点
                 logger.info(f"为视频 {video_path.name} 选择缩略图时间点: {time_offset}秒")
@@ -96,21 +96,21 @@ class ThumbnailGenerator:
                     str(output_path)
                 ]
             
-            logger.info(f"生成缩略图: {video_path} -> {output_path}")
+            logger.info(f"Tạo ảnh xem trước: {video_path} -> {output_path}")
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
             
             if result.returncode == 0:
-                logger.info(f"缩略图生成成功: {output_path}")
+                logger.info(f"Tạo ảnh xem trước thành công: {output_path}")
                 return output_path
             else:
                 logger.error(f"缩略图生成失败: {result.stderr}")
                 return None
                 
         except subprocess.TimeoutExpired:
-            logger.error(f"缩略图生成超时: {video_path}")
+            logger.error(f"Tạo ảnh xem trước quá thời gian: {video_path}")
             return None
         except Exception as e:
-            logger.error(f"缩略图生成异常: {e}")
+            logger.error(f"Lỗi tạo ảnh xem trước: {e}")
             return None
     
     def _extract_video_cover(self, video_path: Path) -> Optional[Path]:

@@ -1,25 +1,25 @@
 #!/bin/bash
 
-# AutoClip 系统停止脚本
-# 版本: 2.0
-# 功能: 优雅地停止所有AutoClip服务
+# Script dừng hệ thống AutoClip
+# Phiên bản: 2.0
+# Chức năng: Dừng tất cả dịch vụ AutoClip một cách an toàn
 
 set -euo pipefail
 
 # =============================================================================
-# 配置区域
+# Vùng cấu hình
 # =============================================================================
 
-# PID文件
+# File PID
 BACKEND_PID_FILE="backend.pid"
 FRONTEND_PID_FILE="frontend.pid"
 CELERY_PID_FILE="celery.pid"
 
-# 日志目录
+# Thư mục nhật ký
 LOG_DIR="logs"
 
 # =============================================================================
-# 颜色和样式定义
+# Định nghĩa màu sắc và kiểu
 # =============================================================================
 
 RED='\033[0;31m'
@@ -29,7 +29,7 @@ BLUE='\033[0;34m'
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 
-# 图标定义
+# Định nghĩa biểu tượng
 ICON_SUCCESS="✅"
 ICON_ERROR="❌"
 ICON_WARNING="⚠️"
@@ -38,7 +38,7 @@ ICON_STOP="🛑"
 ICON_CLEAN="🧹"
 
 # =============================================================================
-# 工具函数
+# Hàm tiện ích
 # =============================================================================
 
 log_info() {
@@ -62,7 +62,7 @@ log_header() {
     echo -e "${PURPLE}$(printf '=%.0s' {1..50})${NC}"
 }
 
-# 停止进程
+# Dừng tiến trình
 stop_process() {
     local pid_file="$1"
     local service_name="$2"
@@ -70,168 +70,168 @@ stop_process() {
     if [[ -f "$pid_file" ]]; then
         local pid=$(cat "$pid_file")
         if kill -0 "$pid" 2>/dev/null; then
-            log_info "停止 $service_name (PID: $pid)..."
+            log_info "Đang dừng $service_name (PID: $pid)..."
             
-            # 优雅停止
+            # Dừng an toàn
             kill "$pid" 2>/dev/null || true
             
-            # 等待进程结束
+            # Chờ tiến trình kết thúc
             local count=0
             while kill -0 "$pid" 2>/dev/null && [[ $count -lt 10 ]]; do
                 sleep 1
                 ((count++))
             done
             
-            # 如果进程仍在运行，强制停止
+            # Nếu tiến trình vẫn chạy, ép dừng
             if kill -0 "$pid" 2>/dev/null; then
-                log_warning "强制停止 $service_name..."
+                log_warning "Đang ép dừng $service_name..."
                 kill -9 "$pid" 2>/dev/null || true
                 sleep 1
             fi
             
             if kill -0 "$pid" 2>/dev/null; then
-                log_error "无法停止 $service_name"
+                log_error "Không thể dừng $service_name"
             else
-                log_success "$service_name 已停止"
+                log_success "$service_name đã dừng"
             fi
         else
-            log_warning "$service_name 进程不存在"
+            log_warning "Tiến trình $service_name không tồn tại"
         fi
         rm -f "$pid_file"
     else
-        log_info "$service_name PID文件不存在"
+        log_info "File PID $service_name không tồn tại"
     fi
 }
 
-# 停止所有相关进程
+# Dừng tất cả tiến trình liên quan
 stop_all_processes() {
-    log_header "停止所有AutoClip服务"
+    log_header "Dừng tất cả dịch vụ AutoClip"
     
-    # 停止通过PID文件管理的进程
-    stop_process "$BACKEND_PID_FILE" "后端服务"
-    stop_process "$FRONTEND_PID_FILE" "前端服务"
+    # Dừng các tiến trình quản lý bằng file PID
+    stop_process "$BACKEND_PID_FILE" "Dịch vụ backend"
+    stop_process "$FRONTEND_PID_FILE" "Dịch vụ frontend"
     stop_process "$CELERY_PID_FILE" "Celery Worker"
     
-    # 停止所有相关进程
-    log_info "停止所有Celery Worker进程..."
+    # Dừng tất cả tiến trình liên quan
+    log_info "Đang dừng tất cả tiến trình Celery Worker..."
     pkill -f "celery.*worker" 2>/dev/null || true
     
-    log_info "停止所有后端API进程..."
+    log_info "Đang dừng tất cả tiến trình backend API..."
     pkill -f "uvicorn.*backend.main:app" 2>/dev/null || true
     
-    log_info "停止所有前端开发服务器..."
+    log_info "Đang dừng tất cả máy chủ phát triển frontend..."
     pkill -f "npm.*dev" 2>/dev/null || true
     pkill -f "vite" 2>/dev/null || true
     
-    # 等待进程完全停止
+    # Chờ tiến trình dừng hoàn toàn
     sleep 2
     
-    log_success "所有服务已停止"
+    log_success "Tất cả dịch vụ đã dừng"
 }
 
-# 清理临时文件
+# Dọn dẹp file tạm
 cleanup_temp_files() {
-    log_header "清理临时文件"
+    log_header "Dọn dẹp file tạm"
     
-    # 清理PID文件
+    # Dọn file PID
     rm -f "$BACKEND_PID_FILE" "$FRONTEND_PID_FILE" "$CELERY_PID_FILE"
-    log_success "PID文件已清理"
+    log_success "Đã dọn file PID"
     
-    # 清理Celery临时文件
+    # Dọn file tạm Celery
     rm -f /tmp/celerybeat-schedule /tmp/celerybeat.pid 2>/dev/null || true
-    log_success "Celery临时文件已清理"
+    log_success "Đã dọn file tạm Celery"
     
-    # 清理Python缓存
+    # Dọn cache Python
     find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
     find . -name "*.pyc" -delete 2>/dev/null || true
-    log_success "Python缓存已清理"
+    log_success "Đã dọn cache Python"
 }
 
-# 显示系统状态
+# Hiển thị trạng thái hệ thống
 show_system_status() {
-    log_header "系统状态检查"
+    log_header "Kiểm tra trạng thái hệ thống"
     
     local services_running=false
     
-    # 检查后端服务
+    # Kiểm tra dịch vụ backend
     if pgrep -f "uvicorn.*backend.main:app" >/dev/null; then
-        log_warning "后端服务仍在运行"
+        log_warning "Dịch vụ backend vẫn đang chạy"
         services_running=true
     else
-        log_success "后端服务已停止"
+        log_success "Dịch vụ backend đã dừng"
     fi
     
-    # 检查前端服务
+    # Kiểm tra dịch vụ frontend
     if pgrep -f "npm.*dev\|vite" >/dev/null; then
-        log_warning "前端服务仍在运行"
+        log_warning "Dịch vụ frontend vẫn đang chạy"
         services_running=true
     else
-        log_success "前端服务已停止"
+        log_success "Dịch vụ frontend đã dừng"
     fi
     
-    # 检查Celery Worker
+    # Kiểm tra Celery Worker
     if pgrep -f "celery.*worker" >/dev/null; then
-        log_warning "Celery Worker仍在运行"
+        log_warning "Celery Worker vẫn đang chạy"
         services_running=true
     else
-        log_success "Celery Worker已停止"
+        log_success "Celery Worker đã dừng"
     fi
     
     if [[ "$services_running" == true ]]; then
-        log_warning "部分服务仍在运行，可能需要手动停止"
+        log_warning "Một số dịch vụ vẫn đang chạy, có thể cần dừng thủ công"
         echo ""
-        echo "仍在运行的进程:"
+        echo "Các tiến trình vẫn đang chạy:"
         pgrep -f "uvicorn.*backend.main:app\|npm.*dev\|vite\|celery.*worker" | while read pid; do
             ps -p "$pid" -o pid,ppid,cmd --no-headers 2>/dev/null || true
         done
     else
-        log_success "所有AutoClip服务已完全停止"
+        log_success "Tất cả dịch vụ AutoClip đã dừng hoàn toàn"
     fi
 }
 
-# 显示日志信息
+# Hiển thị thông tin nhật ký
 show_log_info() {
-    log_header "日志文件信息"
+    log_header "Thông tin file nhật ký"
     
     if [[ -d "$LOG_DIR" ]]; then
-        echo "日志文件位置:"
+        echo "Vị trí file nhật ký:"
         ls -la "$LOG_DIR"/*.log 2>/dev/null | while read line; do
             echo "  $line"
         done
         echo ""
-        echo "查看最新日志:"
-        echo "  后端日志: tail -f $LOG_DIR/backend.log"
-        echo "  前端日志: tail -f $LOG_DIR/frontend.log"
-        echo "  Celery日志: tail -f $LOG_DIR/celery.log"
+        echo "Xem nhật ký mới nhất:"
+        echo "  Nhật ký backend: tail -f $LOG_DIR/backend.log"
+        echo "  Nhật ký frontend: tail -f $LOG_DIR/frontend.log"
+        echo "  Nhật ký Celery: tail -f $LOG_DIR/celery.log"
     else
-        log_info "日志目录不存在"
+        log_info "Thư mục nhật ký không tồn tại"
     fi
 }
 
 # =============================================================================
-# 主函数
+# Hàm chính
 # =============================================================================
 
 main() {
-    log_header "AutoClip 系统停止器 v2.0"
+    log_header "Bộ dừng hệ thống AutoClip v2.0"
     
-    # 停止所有服务
+    # Dừng tất cả dịch vụ
     stop_all_processes
     
-    # 清理临时文件
+    # Dọn dẹp file tạm
     cleanup_temp_files
     
-    # 显示系统状态
+    # Hiển thị trạng thái hệ thống
     show_system_status
     
-    # 显示日志信息
+    # Hiển thị thông tin nhật ký
     show_log_info
     
     echo ""
-    log_success "AutoClip 系统已完全停止"
+    log_success "Hệ thống AutoClip đã dừng hoàn toàn"
     echo ""
-    echo "如需重新启动，请运行: ./start_autoclip.sh"
+    echo "Để khởi động lại, vui lòng chạy: ./start_autoclip.sh"
 }
 
-# 运行主函数
+# Chạy hàm chính
 main "$@"

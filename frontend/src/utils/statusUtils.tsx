@@ -1,6 +1,6 @@
 /**
- * 统一的状态处理工具
- * 解决前端项目中状态处理不一致的问题
+ * Công cụ xử lý trạng thái thống nhất
+ * Giải quyết vấn đề xử lý trạng thái không nhất quán trong dự án frontend
  */
 
 import { 
@@ -52,7 +52,7 @@ export const getProjectStatusConfig = (status: ProjectStatus): ProjectStatusConf
       return {
         color: '#1890ff',
         icon: ClockCircleOutlined,
-        text: '等待中',
+        text: 'Đang chờ',
         badgeStatus: 'processing',
         backgroundColor: 'rgba(217, 217, 217, 0.15)',
         borderColor: 'rgba(217, 217, 217, 0.3)'
@@ -61,7 +61,7 @@ export const getProjectStatusConfig = (status: ProjectStatus): ProjectStatusConf
       return {
         color: '#1890ff',
         icon: LoadingOutlined,
-        text: '处理中',
+        text: 'Đang xử lý',
         badgeStatus: 'processing',
         backgroundColor: 'rgba(24, 144, 255, 0.15)',
         borderColor: 'rgba(24, 144, 255, 0.3)'
@@ -70,7 +70,7 @@ export const getProjectStatusConfig = (status: ProjectStatus): ProjectStatusConf
       return {
         color: '#52c41a',
         icon: CheckCircleOutlined,
-        text: '已完成',
+        text: 'Đã hoàn thành',
         badgeStatus: 'success',
         backgroundColor: 'rgba(82, 196, 26, 0.15)',
         borderColor: 'rgba(82, 196, 26, 0.3)'
@@ -79,7 +79,7 @@ export const getProjectStatusConfig = (status: ProjectStatus): ProjectStatusConf
       return {
         color: '#ff4d4f',
         icon: ExclamationCircleOutlined,
-        text: '失败',
+        text: 'Thất bại',
         badgeStatus: 'error',
         backgroundColor: 'rgba(255, 77, 79, 0.15)',
         borderColor: 'rgba(255, 77, 79, 0.3)'
@@ -88,7 +88,7 @@ export const getProjectStatusConfig = (status: ProjectStatus): ProjectStatusConf
       return {
         color: '#d9d9d9',
         icon: ClockCircleOutlined,
-        text: '未知状态',
+        text: 'Trạng thái không xác định',
         badgeStatus: 'default',
         backgroundColor: 'rgba(217, 217, 217, 0.15)',
         borderColor: 'rgba(217, 217, 217, 0.3)'
@@ -105,42 +105,42 @@ export const getTaskStatusConfig = (status: TaskStatus): TaskStatusConfig => {
       return {
         color: '#1890ff',
         icon: ClockCircleOutlined,
-        text: '等待中',
+        text: 'Đang chờ',
         badgeStatus: 'processing'
       }
     case 'running':
       return {
         color: '#1890ff',
         icon: PlayCircleOutlined,
-        text: '执行中',
+        text: 'Đang thực thi',
         badgeStatus: 'processing'
       }
     case 'completed':
       return {
         color: '#52c41a',
         icon: CheckCircleOutlined,
-        text: '已完成',
+        text: 'Đã hoàn thành',
         badgeStatus: 'success'
       }
     case 'failed':
       return {
         color: '#ff4d4f',
         icon: CloseCircleOutlined,
-        text: '失败',
+        text: 'Thất bại',
         badgeStatus: 'error'
       }
     case 'cancelled':
       return {
         color: '#d9d9d9',
         icon: CloseCircleOutlined,
-        text: '已取消',
+        text: 'Đã hủy',
         badgeStatus: 'default'
       }
     default:
       return {
         color: '#d9d9d9',
         icon: ClockCircleOutlined,
-        text: '未知状态',
+        text: 'Trạng thái không xác định',
         badgeStatus: 'default'
       }
   }
@@ -155,35 +155,35 @@ export const getUploadStatusConfig = (status: UploadStatus): UploadStatusConfig 
       return {
         color: '#1890ff',
         icon: ClockCircleOutlined,
-        text: '待处理',
+        text: 'Chờ xử lý',
         badgeStatus: 'processing'
       }
     case 'processing':
       return {
         color: '#1890ff',
         icon: LoadingOutlined,
-        text: '处理中',
+        text: 'Đang xử lý',
         badgeStatus: 'processing'
       }
     case 'success':
       return {
         color: '#52c41a',
         icon: CheckCircleOutlined,
-        text: '成功',
+        text: 'Thành công',
         badgeStatus: 'success'
       }
     case 'failed':
       return {
         color: '#ff4d4f',
         icon: CloseCircleOutlined,
-        text: '失败',
+        text: 'Thất bại',
         badgeStatus: 'error'
       }
     default:
       return {
         color: '#d9d9d9',
         icon: ClockCircleOutlined,
-        text: '未知状态',
+        text: 'Trạng thái không xác định',
         badgeStatus: 'default'
       }
   }

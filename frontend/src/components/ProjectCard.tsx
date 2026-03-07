@@ -15,12 +15,12 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/vi'
 
 dayjs.extend(relativeTime)
 dayjs.extend(timezone)
 dayjs.extend(utc)
-dayjs.locale('zh-cn')
+dayjs.locale('vi')
 
 // 添加CSS动画样式
 const pulseAnimation = `
@@ -75,14 +75,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
   // 获取分类信息
   const getCategoryInfo = (category?: string) => {
     const categoryMap: Record<string, { name: string; icon: string; color: string }> = {
-      'default': { name: '默认', icon: '🎬', color: '#4facfe' },
-      'knowledge': { name: '知识科普', icon: '📚', color: '#52c41a' },
-      'business': { name: '商业财经', icon: '💼', color: '#faad14' },
-      'opinion': { name: '观点评论', icon: '💭', color: '#722ed1' },
-      'experience': { name: '经验分享', icon: '🌟', color: '#13c2c2' },
-      'speech': { name: '演讲脱口秀', icon: '🎤', color: '#eb2f96' },
-      'content_review': { name: '内容解说', icon: '🎭', color: '#f5222d' },
-      'entertainment': { name: '娱乐内容', icon: '🎪', color: '#fa8c16' }
+      'default': { name: 'Mặc định', icon: '🎬', color: '#4facfe' },
+      'knowledge': { name: 'Kiến thức', icon: '📚', color: '#52c41a' },
+      'business': { name: 'Kinh doanh', icon: '💼', color: '#faad14' },
+      'opinion': { name: 'Quan điểm', icon: '💭', color: '#722ed1' },
+      'experience': { name: 'Kinh nghiệm', icon: '🌟', color: '#13c2c2' },
+      'speech': { name: 'Diễn thuyết', icon: '🎤', color: '#eb2f96' },
+      'content_review': { name: 'Giải thích nội dung', icon: '🎭', color: '#f5222d' },
+      'entertainment': { name: 'Giải trí', icon: '🎪', color: '#fa8c16' }
     }
     return categoryMap[category || 'default'] || categoryMap['default']
   }
@@ -320,7 +320,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
       }
     } catch (error) {
       console.error('重试失败:', error)
-      message.error('重试失败，请稍后再试')
+      message.error('Thử lại thất bại, vui lòng thử sau')
     } finally {
       setIsRetrying(false)
     }
@@ -373,7 +373,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
           onClick={() => {
             // 导入中状态的项目不能点击进入详情页
             if (project.status === 'pending') {
-              message.warning('项目正在导入中，请稍后再查看详情')
+              message.warning('Dự án đang được nhập, vui lòng xem chi tiết sau')
               return
             }
             
@@ -400,7 +400,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                 fontSize: '12px',
                 fontWeight: 500
               }}>
-                生成封面中...
+                Đang tạo ảnh bìa...
               </div>
             </div>
           )}
@@ -421,7 +421,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                 fontSize: '12px',
                 fontWeight: 500
               }}>
-                点击预览
+                Nhấn xem trước
               </div>
             </div>
           )}
@@ -471,7 +471,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
             height: '28px'
           }}>
             <Text style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.8)' }}>
-              {dayjs(project.created_at).tz('Asia/Shanghai').fromNow()}
+              {dayjs(project.created_at).tz('Asia/Ho_Chi_Minh').fromNow()}
             </Text>
             
             {/* 操作按钮 */}
@@ -509,8 +509,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                   />
                   
                   <Popconfirm
-                    title="确定要删除这个项目吗？"
-                    description="删除后无法恢复"
+                    title="Bạn có chắc muốn xóa dự án này?"
+                    description="Không thể khôi phục sau khi xóa"
                     onConfirm={(e) => {
                       e?.stopPropagation()
                       onDelete(project.id)
@@ -518,8 +518,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                     onCancel={(e) => {
                       e?.stopPropagation()
                     }}
-                    okText="确定"
-                    cancelText="取消"
+                    okText="Đồng ý"
+                    cancelText="Hủy"
                   >
                     <Button
                       type="text"
@@ -547,7 +547,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                   <Space size={4}>
                     {/* 重试按钮 - 在处理中和等待中状态显示，允许用户重新提交任务 */}
                     {(normalizedStatus === 'processing' || normalizedStatus === 'importing' || project.status === 'pending') && (
-                      <Tooltip title={project.status === 'pending' ? "开始处理" : "重新提交任务"}>
+                      <Tooltip title={project.status === 'pending' ? "Bắt đầu xử lý" : "Gửi lại tác vụ"}>
                         <Button
                           type="text"
                           icon={<ReloadOutlined />}
@@ -579,7 +579,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                         onClick={(e) => {
                           e.stopPropagation()
                           // 实现下载功能
-                          message.info('下载功能开发中...')
+                          message.info('Tính năng tải xuống đang phát triển...')
                         }}
                         style={{
                           width: '20px',
@@ -597,8 +597,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                     
                     {/* 删除按钮 */}
                     <Popconfirm
-                      title="确定要删除这个项目吗？"
-                      description="删除后无法恢复"
+                      title="Bạn có chắc muốn xóa dự án này?"
+                      description="Sau khi xóa sẽ không thể khôi phục"
                       onConfirm={(e) => {
                         e?.stopPropagation()
                         onDelete(project.id)
@@ -606,8 +606,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                       onCancel={(e) => {
                         e?.stopPropagation()
                       }}
-                      okText="确定"
-                      cancelText="取消"
+                      okText="Xác nhận"
+                      cancelText="Hủy"
                     >
                       <Button
                         type="text"
@@ -720,7 +720,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                   {project.total_clips || 0}
                 </div>
                 <div style={{ color: '#999999', fontSize: '8px', lineHeight: '9px' }}>
-                  切片
+                  clip
                 </div>
               </div>
               
@@ -738,7 +738,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, onDelete, onRetry, o
                   {project.total_collections || 0}
                 </div>
                 <div style={{ color: '#999999', fontSize: '8px', lineHeight: '9px' }}>
-                  合集
+                  tập
                 </div>
               </div>
             </div>

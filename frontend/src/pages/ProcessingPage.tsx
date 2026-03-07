@@ -26,19 +26,19 @@ const ProcessingPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
 
   const steps = [
-    { title: '大纲提取', description: '从视频转写文本中提取结构性大纲' },
-    { title: '时间定位', description: '基于SRT字幕定位话题时间区间' },
-    { title: '内容评分', description: '多维度评估片段质量与传播潜力' },
-    { title: '标题生成', description: '为高分片段生成吸引人的标题' },
-    { title: '主题聚类', description: '将相关片段聚合为合集推荐' },
-    { title: '视频切割', description: '使用FFmpeg生成切片与合集视频' }
+    { title: 'Trích xuất đề cương', description: 'Trích xuất đề cương cấu trúc từ văn bản chuyển ngữ video' },
+    { title: 'Định vị thời gian', description: 'Định vị khoảng thời gian chủ đề dựa trên phụ đề SRT' },
+    { title: 'Chấm điểm nội dung', description: 'Đánh giá đa chiều chất lượng và tiềm năng lan truyền' },
+    { title: 'Tạo tiêu đề', description: 'Tạo tiêu đề hấp dẫn cho các đoạn có điểm cao' },
+    { title: 'Phân nhóm chủ đề', description: 'Gom các đoạn liên quan thành hợp tuyển đề xuất' },
+    { title: 'Cắt video', description: 'Dùng FFmpeg tạo clip và video hợp tuyển' }
   ]
 
   useEffect(() => {
     if (!id) return
     
     loadProject()
-    const interval = setInterval(checkStatus, 2000) // 每2秒检查一次状态
+    const interval = setInterval(checkStatus, 2000) // Kiểm tra trạng thái mỗi 2 giây
     
     return () => clearInterval(interval)
   }, [id])
@@ -50,18 +50,18 @@ const ProcessingPage: React.FC = () => {
       const project = await projectApi.getProject(id)
       setCurrentProject(project)
       
-      // 如果项目已完成，直接跳转到详情页
+      // Nếu dự án đã hoàn thành, chuyển thẳng đến trang chi tiết
       if (project.status === 'completed') {
         navigate(`/project/${id}`)
         return
       }
       
-      // 如果项目状态是等待处理，开始处理
+      // Nếu dự án đang chờ xử lý, bắt đầu xử lý
       if (project.status === 'pending') {
         await startProcessing()
       }
     } catch (error) {
-      message.error('加载项目失败')
+      message.error('Tải dự án thất bại')
       console.error('Load project error:', error)
     } finally {
       setLoading(false)
@@ -73,9 +73,9 @@ const ProcessingPage: React.FC = () => {
     
     try {
       await projectApi.startProcessing(id)
-      message.success('开始处理项目')
+      message.success('Bắt đầu xử lý dự án')
     } catch (error) {
-      message.error('启动处理失败')
+      message.error('Khởi động xử lý thất bại')
       console.error('Start processing error:', error)
     }
   }
@@ -87,34 +87,34 @@ const ProcessingPage: React.FC = () => {
       const statusData = await projectApi.getProcessingStatus(id)
       setStatus(statusData)
       
-      // 如果处理完成，跳转到项目详情页
+      // Nếu xử lý hoàn tất, chuyển đến trang chi tiết dự án
       if (statusData.status === 'completed') {
-        message.success('🎉 视频处理完成！正在跳转到结果页面...')
+        message.success('🎉 Xử lý video hoàn tất! Đang chuyển đến trang kết quả...')
         setTimeout(() => {
           navigate(`/project/${id}`)
         }, 2000)
       }
       
-      // 如果处理失败，显示详细错误信息
+      // Nếu xử lý thất bại, hiển thị chi tiết lỗi
       if (statusData.status === 'error') {
-        const errorMsg = statusData.error_message || '处理过程中发生未知错误'
-        message.error(`处理失败: ${errorMsg}`)
+        const errorMsg = statusData.error_message || 'Đã xảy ra lỗi không xác định trong quá trình xử lý'
+        message.error(`Xử lý thất bại: ${errorMsg}`)
         
-        // 提供重试选项
-        message.info('您可以返回首页重新上传文件或联系技术支持', 5)
+        // Gợi ý thử lại
+        message.info('Bạn có thể quay về trang chủ tải lên lại file hoặc liên hệ hỗ trợ kỹ thuật', 5)
       }
       
     } catch (error: any) {
       console.error('Check status error:', error)
       
-      // 根据错误类型提供不同的处理建议
+      // Đưa ra gợi ý xử lý theo từng loại lỗi
       if (error.response?.status === 404) {
-        message.error('项目不存在或已被删除')
+        message.error('Dự án không tồn tại hoặc đã bị xóa')
         setTimeout(() => navigate('/'), 2000)
       } else if (error.code === 'ECONNABORTED') {
-        message.warning('网络连接超时，正在重试...')
+        message.warning('Hết thời gian kết nối mạng, đang thử lại...')
       } else {
-        message.error('获取处理状态失败，请刷新页面重试')
+        message.error('Lấy trạng thái xử lý thất bại, vui lòng làm mới trang và thử lại')
       }
     }
   }
@@ -143,7 +143,7 @@ const ProcessingPage: React.FC = () => {
   if (loading) {
     return (
       <Content style={{ padding: '24px', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <Spin size="large" tip="加载中..." />
+        <Spin size="large" tip="Đang tải..." />
       </Content>
     )
   }
@@ -152,30 +152,30 @@ const ProcessingPage: React.FC = () => {
     <Content style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Title level={2}>视频处理进度</Title>
+          <Title level={2}>Tiến độ xử lý video</Title>
           <Button 
             icon={<ArrowLeftOutlined />} 
             onClick={() => navigate('/')}
           >
-            返回首页
+            Về trang chủ
           </Button>
         </div>
 
         {currentProject && (
           <Card>
             <Title level={4}>{currentProject.name}</Title>
-            <Text type="secondary">项目ID: {currentProject.id}</Text>
+            <Text type="secondary">ID dự án: {currentProject.id}</Text>
           </Card>
         )}
 
         {status?.status === 'error' && (
           <Alert
-            message="处理失败"
+            message="Xử lý thất bại"
             description={
               <div>
-                <p>{status.error_message || '处理过程中发生未知错误'}</p>
+                <p>{status.error_message || 'Đã xảy ra lỗi không xác định trong quá trình xử lý'}</p>
                 <p style={{ marginTop: '8px', fontSize: '12px', color: '#666' }}>
-                  可能的原因：文件格式不支持、文件损坏、网络问题或服务器错误
+                  Có thể do: định dạng file không hỗ trợ, file bị hỏng, vấn đề mạng hoặc lỗi máy chủ
                 </p>
               </div>
             }
@@ -184,10 +184,10 @@ const ProcessingPage: React.FC = () => {
             action={
               <Space>
                 <Button size="small" onClick={() => window.location.reload()}>
-                  刷新页面
+                  Làm mới trang
                 </Button>
                 <Button size="small" onClick={() => navigate('/')}>
-                  返回首页
+                  Về trang chủ
                 </Button>
               </Space>
             }
@@ -195,11 +195,11 @@ const ProcessingPage: React.FC = () => {
         )}
 
         {status && status.status === 'processing' && (
-          <Card title="处理进度">
+          <Card title="Tiến độ xử lý">
             <Space direction="vertical" size="large" style={{ width: '100%' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <Text strong>总体进度</Text>
+                  <Text strong>Tổng tiến độ</Text>
                   <Text>{Math.round(status.progress)}%</Text>
                 </div>
                 <Progress 
@@ -213,7 +213,7 @@ const ProcessingPage: React.FC = () => {
               </div>
 
               <div>
-                <Text strong>当前步骤: </Text>
+                <Text strong>Bước hiện tại: </Text>
                 <Text>{status.step_name}</Text>
               </div>
 
@@ -238,8 +238,8 @@ const ProcessingPage: React.FC = () => {
 
         {status?.status === 'completed' && (
           <Alert
-            message="处理完成"
-            description="视频已成功处理完成，正在跳转到项目详情页..."
+            message="Xử lý hoàn tất"
+            description="Video đã xử lý thành công, đang chuyển đến trang chi tiết dự án..."
             type="success"
             showIcon
           />

@@ -17,7 +17,7 @@
 [![GitHub forks](https://img.shields.io/badge/Forks-0-blue?style=social)](https://github.com/zhouxiaoka/autoclip)
 [![GitHub issues](https://img.shields.io/badge/Issues-0-blue)](https://github.com/zhouxiaoka/autoclip/issues)
 
-**语言**: [English](README-EN.md) | [中文](README.md)  
+**语言**: [English](README-EN.md) | [Tiếng Việt](README-VI.md) | [中文](README.md)  
 **联系邮箱**: [christine_zhouye@163.com](mailto:christine_zhouye@163.com)
 
 </div>

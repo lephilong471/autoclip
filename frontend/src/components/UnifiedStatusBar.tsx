@@ -133,7 +133,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontSize: '8px', 
           lineHeight: '9px'
         }}>
-          导入中
+          Đang nhập
         </div>
       </div>
     )
@@ -163,7 +163,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontSize: '8px', 
           lineHeight: '9px'
         }}>
-          下载中
+          Đang tải
         </div>
       </div>
     )
@@ -195,7 +195,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontSize: '8px', 
           lineHeight: '9px'
         }}>
-          初始化中...
+          Đang khởi tạo...
         </div>
       </div>
       )
@@ -225,7 +225,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontWeight: 600, 
           lineHeight: '12px'
         }}>
-          {failed ? '✗ 失败' : `${percent}%`}
+          {failed ? '✗ Thất bại' : `${percent}%`}
         </div>
         <div style={{ 
           color: '#999999', 
@@ -263,7 +263,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontSize: '8px', 
           lineHeight: '9px'
         }}>
-          已完成
+          Đã hoàn thành
         </div>
       </div>
     )
@@ -286,7 +286,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           fontWeight: 600, 
           lineHeight: '12px'
         }}>
-          ✗ 失败
+          ✗ Thất bại
         </div>
         <div style={{ 
           color: '#999999', 
@@ -294,7 +294,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
           lineHeight: '9px',
           minHeight: '9px' // 确保失败状态也有固定高度
         }}>
-          处理失败
+          Xử lý thất bại
         </div>
       </div>
     )
@@ -316,7 +316,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
         fontWeight: 600, 
         lineHeight: '12px'
       }}>
-        ○ 等待中
+        ○ Đang chờ
       </div>
       <div style={{ 
         color: '#999999', 
@@ -324,7 +324,7 @@ export const UnifiedStatusBar: React.FC<UnifiedStatusBarProps> = ({
         lineHeight: '9px',
         minHeight: '9px' // 确保等待状态也有固定高度
       }}>
-        等待处理
+        Chờ xử lý
       </div>
     </div>
   )

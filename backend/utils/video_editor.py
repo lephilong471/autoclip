@@ -9,12 +9,12 @@ from .subtitle_processor import SubtitleProcessor
 logger = logging.getLogger(__name__)
 
 class VideoEditor:
-    """视频编辑器 - 支持基于字幕删除的视频重新剪辑"""
+    """Trình chỉnh sửa video - Hỗ trợ cắt lại video dựa trên xóa phụ đề"""
     
     def __init__(self, clips_dir: Optional[str] = None, collections_dir: Optional[str] = None):
-        # VideoEditor 也需要指定路径参数，防止使用全局路径
+        # VideoEditor cũng cần chỉ định tham số đường dẫn, tránh dùng đường dẫn toàn cục
         if clips_dir is None or collections_dir is None:
-            # 如果没有提供路径，使用临时目录（不影响主流水线）
+            # Nếu không cung cấp đường dẫn, dùng thư mục tạm (không ảnh hưởng pipeline chính)
             from ..core.shared_config import CLIPS_DIR, COLLECTIONS_DIR
             clips_dir = str(CLIPS_DIR) if clips_dir is None else clips_dir
             collections_dir = str(COLLECTIONS_DIR) if collections_dir is None else collections_dir
@@ -28,19 +28,19 @@ class VideoEditor:
                                       deleted_segments: List[str],
                                       output_path: Path) -> Dict:
         """
-        基于字幕删除编辑视频
+        Chỉnh sửa video bằng cách xóa các đoạn phụ đề
         
         Args:
-            video_path: 原始视频路径
-            subtitle_data: 字幕数据
-            deleted_segments: 要删除的字幕段ID列表
-            output_path: 输出视频路径
+            video_path: Đường dẫn video gốc
+            subtitle_data: Dữ liệu phụ đề
+            deleted_segments: Danh sách ID đoạn phụ đề cần xóa
+            output_path: Đường dẫn video đầu ra
             
         Returns:
-            编辑结果信息
+            Thông tin kết quả chỉnh sửa
         """
         try:
-            logger.info(f"开始基于字幕删除编辑视频: {video_path}")
+            logger.info(f"Bắt đầu chỉnh sửa video bằng xóa phụ đề: {video_path}")
             
             # 生成编辑后的时间轴
             timeline = self.subtitle_processor.generate_edited_video_timeline(
@@ -48,10 +48,10 @@ class VideoEditor:
             )
             
             if not timeline:
-                logger.warning("没有保留的时间段，无法生成视频")
+                logger.warning("Không còn khoảng thời gian nào được giữ, không thể tạo video")
                 return {
                     'success': False,
-                    'error': '没有保留的时间段'
+                    'error': 'Không còn khoảng thời gian nào được giữ'
                 }
             
             # 计算删除的总时长
@@ -78,8 +78,8 @@ class VideoEditor:
                     'deletedSegments': deleted_segments
                 }
                 
-                logger.info(f"视频编辑完成: 删除时长 {total_deleted_duration:.2f}秒，"
-                          f"最终时长 {final_duration:.2f}秒")
+                logger.info(f"Chỉnh sửa video hoàn tất: Đã xóa {total_deleted_duration:.2f}s, "
+                          f"thời lượng cuối {final_duration:.2f}s")
                 return result
             else:
                 return {
@@ -88,7 +88,7 @@ class VideoEditor:
                 }
                 
         except Exception as e:
-            logger.error(f"视频编辑失败: {e}")
+            logger.error(f"Chỉnh sửa video thất bại: {e}")
             return {
                 'success': False,
                 'error': str(e)
@@ -97,14 +97,14 @@ class VideoEditor:
     def _calculate_deleted_duration(self, subtitle_data: List[Dict], 
                                   deleted_segments: List[str]) -> float:
         """
-        计算删除的总时长
+        Tính tổng thời lượng đã xóa
         
         Args:
-            subtitle_data: 字幕数据
-            deleted_segments: 删除的字幕段ID列表
+            subtitle_data: Dữ liệu phụ đề
+            deleted_segments: Danh sách ID đoạn phụ đề đã xóa
             
         Returns:
-            删除的总时长（秒）
+            Tổng thời lượng đã xóa (giây)
         """
         deleted_ids = set(deleted_segments)
         total_duration = 0.0

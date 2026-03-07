@@ -78,7 +78,7 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
 
   const handleOpenSubtitleEditor = async () => {
     // 显示开发中提示
-    message.info('开发中，敬请期待')
+    message.info('Đang phát triển, vui lòng chờ!')
   }
 
   const handleSubtitleEditorClose = () => {
@@ -147,7 +147,7 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
             marginBottom: '20px'
           }}>
             <Title level={4} style={{ margin: 0, color: '#ffffff' }}>
-              切片详情
+              Chi tiết đoạn
             </Title>
             <Button 
               type="text" 
@@ -194,7 +194,7 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
                         border: 'none'
                       }}
                     >
-                      评分: {(clip.final_score * 100).toFixed(0)}分
+                      Điểm: {(clip.final_score * 100).toFixed(0)}
                     </Tag>
                   )}
                   {clip.outline && (
@@ -211,7 +211,7 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
                   icon={<PlayCircleOutlined />}
                   onClick={() => setPlaying(!playing)}
                 >
-                  {playing ? '暂停' : '播放'}
+                  {playing ? 'Tạm dừng' : 'Phát'}
                 </Button>
                 <Button 
                   type="default" 
@@ -219,14 +219,14 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
                   loading={downloading}
                   onClick={handleDownload}
                 >
-                  下载切片
+                  Tải xuống đoạn
                 </Button>
                 <Button 
                   type="default" 
                   icon={<EditOutlined />}
                   onClick={handleOpenSubtitleEditor}
                 >
-                  字幕编辑
+                  Chỉnh sửa phụ đề
                 </Button>
               </Space>
             </Col>
@@ -238,7 +238,7 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ marginBottom: '8px' }}>
                     <EditableTitle
-                      title={clip.generated_title || clip.title || '未命名片段'}
+                      title={clip.generated_title || clip.title || 'Đoạn chưa đặt tên'}
                       clipId={clip.id}
                       onTitleUpdate={(newTitle) => {
                         // 更新clip的标题
@@ -259,7 +259,7 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
                 {clip.content && clip.content.length > 0 && (
                   <div style={{ marginBottom: '16px' }}>
                     <Text strong style={{ color: '#ffffff', display: 'block', marginBottom: '8px' }}>
-                      内容要点:
+                      Nội dung chính:
                     </Text>
                     <div>
                       {clip.content.map((point, index) => (
@@ -281,11 +281,11 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
                 {/* 时间戳信息 */}
                 <div style={{ marginBottom: '16px' }}>
                   <Text strong style={{ color: '#ffffff', display: 'block', marginBottom: '8px' }}>
-                    时间信息:
+                    Thông tin thời gian:
                   </Text>
                   <div style={{ color: '#cccccc', fontSize: '14px' }}>
-                    <div>开始时间: {formatTime(clip.start_time)}</div>
-                    <div>结束时间: {formatTime(clip.end_time)}</div>
+                    <div>Thời gian bắt đầu: {formatTime(clip.start_time)}</div>
+                    <div>Thời gian kết thúc: {formatTime(clip.end_time)}</div>
                   </div>
                 </div>
 
@@ -296,7 +296,7 @@ const ClipDetailModal: React.FC<ClipDetailModalProps> = ({
         </div>
       </Modal>
 
-      {/* 字幕编辑器 */}
+      {/* Chỉnh sửa phụ đề器 */}
       {showSubtitleEditor && (
         <>
           {console.log('Rendering SubtitleEditor with:', { showSubtitleEditor, subtitleDataLength: subtitleData.length })}

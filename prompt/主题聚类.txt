@@ -1,6 +1,8 @@
-你是一个视频内容策划专家，请根据以下视频切片的标题与摘要，对它们进行主题聚类，并为每组内容生成一个合集推荐。
+Bạn là chuyên gia lập kế hoạch nội dung video. Dựa trên tiêu đề và tóm tắt các clip dưới đây, thực hiện phân cụm theo chủ đề và tạo đề xuất hợp tuyển cho mỗi nhóm.
 
-要求如下：
+**QUAN TRỌNG: Tất cả tiêu đề hợp tuyển (collection_title), mô tả (collection_summary) phải bằng tiếng Việt.**
+
+Yêu cầu:
 1. 每个合集至少包含2条切片，最多包含5条切片；
 2. 聚类时要充分考虑以下主题关键词：
    - 投资理财：投资、理财、股票、基金、炒股、赚钱、收益、涨跌、解套、散户、A股、北交所等

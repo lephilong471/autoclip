@@ -38,7 +38,7 @@ export const InlineProgressBar: React.FC<InlineProgressBarProps> = ({
     progress: currentStep > 0 ? Math.round((currentStep / totalSteps) * 100) : 0,
     currentStep: currentStep,
     totalSteps: totalSteps,
-    stepName: currentStep > 0 ? getStepName(currentStep) : '初始化中...',
+    stepName: currentStep > 0 ? getStepName(currentStep) : 'Đang khởi tạo...',
     stepDetails: ''
   });
 
@@ -90,7 +90,7 @@ export const InlineProgressBar: React.FC<InlineProgressBarProps> = ({
   // 监听props变化，更新进度数据
   useEffect(() => {
     const newProgress = currentStep > 0 ? Math.round((currentStep / totalSteps) * 100) : 0;
-    const newStepName = currentStep > 0 ? getStepName(currentStep) : '初始化中...';
+    const newStepName = currentStep > 0 ? getStepName(currentStep) : 'Đang khởi tạo...';
     
     setProgressData(prev => ({
       ...prev,

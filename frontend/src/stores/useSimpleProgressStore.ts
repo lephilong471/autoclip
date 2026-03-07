@@ -1,5 +1,5 @@
 /**
- * 简化的进度状态管理 - 基于固定阶段和轮询
+ * Quản lý trạng thái tiến độ đơn giản - dựa trên giai đoạn cố định và polling
  */
 
 import { create } from 'zustand'
@@ -61,11 +61,11 @@ export const useSimpleProgressStore = create<SimpleProgressState>((set, get) => 
       }
 
       if (projectIds.length === 0) {
-        console.warn('没有项目ID，跳过轮询')
+        console.warn('Không có ID dự án, bỏ qua polling')
         return
       }
 
-      console.log(`开始轮询进度: ${projectIds.join(', ')}`)
+      console.log(`Bắt đầu polling tiến độ: ${projectIds.join(', ')}`)
 
       // 立即获取一次
       const fetchSnapshots = async () => {
@@ -81,14 +81,14 @@ export const useSimpleProgressStore = create<SimpleProgressState>((set, get) => 
           
           // 更新状态
           snapshots.forEach(snapshot => {
-            console.log(`更新进度: ${snapshot.project_id} - ${snapshot.stage} (${snapshot.percent}%)`)
+            console.log(`Cập nhật tiến độ: ${snapshot.project_id} - ${snapshot.stage} (${snapshot.percent}%)`)
             get().upsert(snapshot)
           })
           
-          console.log(`轮询更新: ${snapshots.length} 个项目`)
+          console.log(`Cập nhật polling: ${snapshots.length} dự án`)
           
         } catch (error) {
-          console.error('轮询进度失败:', error)
+          console.error('Polling tiến độ thất bại:', error)
         }
       }
 
@@ -116,7 +116,7 @@ export const useSimpleProgressStore = create<SimpleProgressState>((set, get) => 
         pollingInterval: null
       })
       
-      console.log('停止轮询进度')
+      console.log('Dừng polling tiến độ')
     },
 
     // 清除单个项目进度
@@ -145,24 +145,24 @@ export const useSimpleProgressStore = create<SimpleProgressState>((set, get) => 
   }
 })
 
-// 阶段显示名称映射
+// Ánh xạ tên hiển thị giai đoạn
 export const STAGE_DISPLAY_NAMES: Record<string, string> = {
-  'INGEST': '素材准备',
-  'SUBTITLE': '字幕处理',
-  'ANALYZE': '内容分析', 
-  'HIGHLIGHT': '片段定位',
-  'EXPORT': '视频导出',
-  'DONE': '处理完成'
+  'INGEST': 'Chuẩn bị tài liệu',
+  'SUBTITLE': 'Xử lý phụ đề',
+  'ANALYZE': 'Phân tích nội dung', 
+  'HIGHLIGHT': 'Định vị phân đoạn',
+  'EXPORT': 'Xuất video',
+  'DONE': 'Xử lý hoàn tất'
 }
 
-// 阶段颜色映射
+// Ánh xạ màu giai đoạn
 export const STAGE_COLORS: Record<string, string> = {
-  'INGEST': '#1890ff',      // 蓝色
-  'SUBTITLE': '#52c41a',    // 绿色
-  'ANALYZE': '#fa8c16',     // 橙色
-  'HIGHLIGHT': '#722ed1',   // 紫色
-  'EXPORT': '#eb2f96',      // 粉色
-  'DONE': '#13c2c2'         // 青色
+  'INGEST': '#1890ff',      // Xanh dương
+  'SUBTITLE': '#52c41a',    // Xanh lá
+  'ANALYZE': '#fa8c16',     // Cam
+  'HIGHLIGHT': '#722ed1',   // Tím
+  'EXPORT': '#eb2f96',      // Hồng
+  'DONE': '#13c2c2'         // Xanh lơ
 }
 
 // 获取阶段显示名称
@@ -180,7 +180,7 @@ export const isCompleted = (stage: string): boolean => {
   return stage === 'DONE'
 }
 
-// 判断是否为失败状态
+// Kiểm tra trạng thái thất bại
 export const isFailed = (message: string): boolean => {
-  return message.includes('失败') || message.includes('错误') || message.includes('失败')
+  return message.includes('失败') || message.includes('错误') || message.includes('thất bại') || message.includes('lỗi')
 }
