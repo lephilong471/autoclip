@@ -88,9 +88,11 @@ COPY docker-entrypoint.sh ./
 # 创建必要的目录
 RUN mkdir -p data/projects data/uploads data/temp data/output logs
 
+# Chuyển CRLF → LF (tránh lỗi "no such file or directory" khi develop trên Windows)
+RUN sed -i 's/\r$//' docker-entrypoint.sh
+
 # 设置权限
 RUN chown -R autoclip:autoclip /app
-RUN chmod +x *.sh
 RUN chmod +x docker-entrypoint.sh
 RUN chmod -R 755 data logs
 
