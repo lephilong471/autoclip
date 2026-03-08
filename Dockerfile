@@ -2,9 +2,12 @@
 # 多阶段构建，优化镜像大小
 
 # 第一阶段：构建前端
-FROM node:18-slim AS frontend-builder
+FROM node:18 AS frontend-builder
 
 WORKDIR /app/frontend
+
+# Bắt buộc cài devDependencies (typescript, vite) - mặc định Docker có thể dùng NODE_ENV=production
+ENV NODE_ENV=development
 
 # 安装必要的系统依赖
 RUN apt-get update && apt-get install -y \
@@ -16,10 +19,10 @@ RUN apt-get update && apt-get install -y \
 # 复制前端依赖文件
 COPY frontend/package*.json ./
 
-# 安装前端依赖（使用完整安装，包括devDependencies）
-RUN npm ci
+# 安装前端依赖 (--include=dev đảm bảo devDependencies được cài)
+RUN npm ci --include=dev
 
-# 复制前端源代码
+# 复制前端源代码 (sau npm ci để không ghi đè node_modules)
 COPY frontend/ ./
 
 # 构建前端
